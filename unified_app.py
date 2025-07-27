@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from flask_bcrypt import Bcrypt
+from flask_mail import Mail, Message
 from datetime import datetime
 import logging
 import os
@@ -51,6 +52,16 @@ def local_datetime_filter(value):
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 
+# Flask-Mail configuration
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME', 'your-email@gmail.com')
+app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD', 'your-app-password')
+app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_DEFAULT_SENDER', 'InsureMyWay <noreply@insuremyway.com>')
+
+mail = Mail(app)
+
 # Flask-Login setup
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -97,6 +108,9 @@ class User(UserMixin, db.Model):
     smoking_status = db.Column(db.String(20))  # never, former, current
     chronic_conditions = db.Column(db.String(100))  # diabetes, hypertension, etc.
     business_ownership = db.Column(db.String(20))  # none, small, medium, large
+
+    # Loan application specific fields
+    monthly_income = db.Column(db.Float)  # monthly income in RWF for loan applications
 
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -145,17 +159,120 @@ class Notification(db.Model):
     type = db.Column(db.String(20), default='info')
     is_read = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    
+
     user = db.relationship('User', backref='notifications')
+
+class TopUpLoan(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    age = db.Column(db.Integer, nullable=False)
+    monthly_income = db.Column(db.Float, nullable=False)  # in RWF
+    loan_amount = db.Column(db.Float, nullable=False)  # in RWF
+    status = db.Column(db.String(20), default='pending')  # pending, approved, rejected
+    application_date = db.Column(db.DateTime, default=datetime.utcnow)
+    review_date = db.Column(db.DateTime)
+    admin_review_notes = db.Column(db.Text)
+    loan_history_score = db.Column(db.String(20))  # good, insufficient, poor
+    rejection_reason = db.Column(db.String(100))  # age_ineligible, low_income, poor_history
+
+    user = db.relationship('User', backref='topup_loans')
+
+class LoanHistory(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    loan_type = db.Column(db.String(50), nullable=False)  # topup, personal, etc.
+    loan_amount = db.Column(db.Float, nullable=False)
+    repayment_status = db.Column(db.String(20), nullable=False)  # completed, defaulted, ongoing
+    loan_date = db.Column(db.DateTime, nullable=False)
+    completion_date = db.Column(db.DateTime)
+    repayment_score = db.Column(db.Integer, default=0)  # 0-100 score based on repayment behavior
+
+    user = db.relationship('User', backref='loan_history')
 
 class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     content = db.Column(db.Text, nullable=False)
-    response = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
-    
+    is_from_admin = db.Column(db.Boolean, default=False)
+
     user = db.relationship('User', backref='messages')
+
+# Email Service Functions
+class EmailService:
+    @staticmethod
+    def send_loan_notification(user_email, user_name, status, loan_amount=None, rejection_reason=None, admin_notes=None):
+        """Send loan application status notification email"""
+        try:
+            if status == 'approved':
+                subject = "Loan Application Approved - InsureMyWay"
+                body = f"""
+Dear {user_name},
+
+Congratulations! Your loan application has been approved.
+
+Loan Details:
+- Amount: {loan_amount:,.0f} RWF
+- Status: Approved
+- Date: {datetime.now().strftime('%Y-%m-%d %H:%M')}
+
+The loan amount will be credited to your account within 24 hours.
+
+Thank you for choosing InsureMyWay!
+
+Best regards,
+InsureMyWay Team
+                """
+            elif status == 'rejected':
+                subject = "Loan Application Update - InsureMyWay"
+                reason_text = {
+                    'age_ineligible': 'You must be at least 18 years old to apply for a loan.',
+                    'low_income': 'Your monthly income does not meet the minimum requirement of 20,000 RWF.',
+                    'poor_history': 'Your loan repayment history does not meet our current requirements.'
+                }.get(rejection_reason, 'Your application does not meet our current requirements.')
+
+                body = f"""
+Dear {user_name},
+
+Thank you for your interest in our loan services. Unfortunately, we cannot approve your loan application at this time.
+
+Reason: {reason_text}
+
+{admin_notes if admin_notes else ''}
+
+You may reapply after addressing the requirements mentioned above.
+
+Best regards,
+InsureMyWay Team
+                """
+            else:  # pending
+                subject = "Loan Application Received - InsureMyWay"
+                body = f"""
+Dear {user_name},
+
+We have received your loan application and it is currently under review.
+
+Application Details:
+- Amount: {loan_amount:,.0f} RWF
+- Status: Pending Review
+- Date: {datetime.now().strftime('%Y-%m-%d %H:%M')}
+
+Our team will review your application and notify you of the decision within 2-3 business days.
+
+Thank you for choosing InsureMyWay!
+
+Best regards,
+InsureMyWay Team
+                """
+
+            msg = Message(subject=subject, recipients=[user_email], body=body)
+            mail.send(msg)
+            logger.info(f"Loan notification email sent to {user_email} for status: {status}")
+            return True
+
+        except Exception as e:
+            logger.error(f"Failed to send email to {user_email}: {str(e)}")
+            return False
 
 # Pure AI/ML Recommendation Engine
 class AIRecommendationEngine:
@@ -420,26 +537,43 @@ def logout():
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    # Get user's recommendations
-    recommendations = AIRecommendationEngine.generate_recommendations(current_user, limit=5)
+    try:
+        # Get user's recommendations
+        recommendations = AIRecommendationEngine.generate_recommendations(current_user, limit=5)
+    except Exception as e:
+        logger.error(f"Error getting recommendations: {e}")
+        recommendations = []
 
-    # Get user's purchases
-    purchases = Purchase.query.filter_by(user_id=current_user.id).order_by(Purchase.purchase_date.desc()).limit(5).all()
+    try:
+        # Get user's purchases - handle potential database issues
+        purchases = Purchase.query.filter_by(user_id=current_user.id).order_by(Purchase.purchase_date.desc()).limit(5).all()
+    except Exception as e:
+        logger.error(f"Error getting purchases: {e}")
+        purchases = []
 
-    # Get unread notifications
-    notifications = Notification.query.filter_by(user_id=current_user.id, is_read=False).order_by(Notification.created_at.desc()).limit(5).all()
+    try:
+        # Get unread notifications
+        notifications = Notification.query.filter_by(user_id=current_user.id, is_read=False).order_by(Notification.created_at.desc()).limit(5).all()
+    except Exception as e:
+        logger.error(f"Error getting notifications: {e}")
+        notifications = []
 
-    # Calculate profile completion with enhanced fields
-    profile_fields = [
-        current_user.age, current_user.occupation, current_user.lifestyle,
-        current_user.health_status, current_user.marital_status, current_user.annual_income,
-        current_user.employment_type, current_user.residence_type, current_user.vehicle_ownership,
-        current_user.risk_tolerance, current_user.insurance_experience, current_user.coverage_priority,
-        current_user.savings_level, current_user.debt_status, current_user.exercise_habits,
-        current_user.smoking_status, current_user.dependents, current_user.travel_frequency
-    ]
-    completed_fields = sum(1 for field in profile_fields if field)
-    completion_percentage = int((completed_fields / len(profile_fields)) * 100)
+    try:
+        # Calculate profile completion with enhanced fields
+        profile_fields = [
+            current_user.age, current_user.occupation, current_user.lifestyle,
+            current_user.health_status, current_user.marital_status, current_user.annual_income,
+            current_user.employment_type, current_user.residence_type, current_user.vehicle_ownership,
+            current_user.risk_tolerance, current_user.insurance_experience, current_user.coverage_priority,
+            getattr(current_user, 'savings_level', None), getattr(current_user, 'debt_status', None),
+            getattr(current_user, 'exercise_habits', None), getattr(current_user, 'smoking_status', None),
+            current_user.dependents, current_user.travel_frequency
+        ]
+        completed_fields = sum(1 for field in profile_fields if field)
+        completion_percentage = int((completed_fields / len(profile_fields)) * 100)
+    except Exception as e:
+        logger.error(f"Error calculating profile completion: {e}")
+        completion_percentage = 0
 
     return render_template('dashboard.html',
                          user=current_user,
@@ -727,6 +861,205 @@ def admin():
                          products=products,
                          messages=messages,
                          analytics=analytics)
+
+# Loan Application Routes
+@app.route('/apply_topup_loan', methods=['GET', 'POST'])
+@login_required
+def apply_topup_loan():
+    """Handle top-up loan applications"""
+    if request.method == 'POST':
+        try:
+            data = request.get_json()
+            age = int(data.get('age', 0))
+            monthly_income = float(data.get('monthly_income', 0))
+            loan_amount = float(data.get('loan_amount', 50000))  # Default loan amount
+
+            # Validation logic
+            if age < 18:
+                return jsonify({
+                    'success': False,
+                    'status': 'rejected',
+                    'reason': 'age_ineligible',
+                    'message': 'You must be at least 18 years old to apply for a loan.'
+                })
+
+            if monthly_income < 20000:
+                return jsonify({
+                    'success': False,
+                    'status': 'rejected',
+                    'reason': 'low_income',
+                    'message': 'Your monthly income must be at least 20,000 RWF to qualify for a loan.'
+                })
+
+            # Check loan history
+            loan_history_score = check_loan_history(current_user.id)
+
+            # Create loan application record
+            loan_application = TopUpLoan(
+                user_id=current_user.id,
+                age=age,
+                monthly_income=monthly_income,
+                loan_amount=loan_amount,
+                loan_history_score=loan_history_score
+            )
+
+            # Determine status based on loan history
+            if loan_history_score == 'good':
+                loan_application.status = 'approved'
+                status_message = 'Congratulations! Your loan has been instantly approved based on your excellent repayment history.'
+            elif loan_history_score == 'poor':
+                loan_application.status = 'rejected'
+                loan_application.rejection_reason = 'poor_history'
+                status_message = 'Your loan application has been rejected due to poor repayment history.'
+            else:  # insufficient
+                loan_application.status = 'pending'
+                status_message = 'Your loan application is under review. You will be notified within 2-3 business days.'
+
+            db.session.add(loan_application)
+            db.session.commit()
+
+            # Send email notification
+            EmailService.send_loan_notification(
+                user_email=current_user.email,
+                user_name=current_user.username,
+                status=loan_application.status,
+                loan_amount=loan_amount,
+                rejection_reason=loan_application.rejection_reason
+            )
+
+            # Create system notification
+            notification = Notification(
+                user_id=current_user.id,
+                title=f'Loan Application {loan_application.status.title()}',
+                message=status_message,
+                type='success' if loan_application.status == 'approved' else 'warning' if loan_application.status == 'pending' else 'error'
+            )
+            db.session.add(notification)
+            db.session.commit()
+
+            return jsonify({
+                'success': True,
+                'status': loan_application.status,
+                'message': status_message,
+                'loan_amount': loan_amount,
+                'application_id': loan_application.id
+            })
+
+        except Exception as e:
+            db.session.rollback()
+            logger.error(f"Loan application error: {str(e)}")
+            return jsonify({
+                'success': False,
+                'status': 'error',
+                'message': 'An error occurred while processing your application. Please try again.'
+            })
+
+    return render_template('topup_loan.html', user=current_user)
+
+def check_loan_history(user_id):
+    """Check user's loan repayment history and return score"""
+    loan_history = LoanHistory.query.filter_by(user_id=user_id).all()
+
+    if not loan_history:
+        return 'insufficient'  # No history available
+
+    # Calculate score based on repayment history
+    total_loans = len(loan_history)
+    completed_loans = len([loan for loan in loan_history if loan.repayment_status == 'completed'])
+    defaulted_loans = len([loan for loan in loan_history if loan.repayment_status == 'defaulted'])
+
+    if defaulted_loans > 0:
+        return 'poor'
+    elif completed_loans >= 2 and (completed_loans / total_loans) >= 0.8:
+        return 'good'
+    else:
+        return 'insufficient'
+
+@app.route('/admin/loan_applications')
+@login_required
+def admin_loan_applications():
+    """Admin interface for reviewing loan applications"""
+    if not current_user.is_admin:
+        flash('Access denied. Admin privileges required.', 'error')
+        return redirect(url_for('dashboard'))
+
+    # Get all loan applications
+    applications = TopUpLoan.query.order_by(TopUpLoan.application_date.desc()).all()
+
+    # Get statistics
+    total_applications = len(applications)
+    pending_applications = len([app for app in applications if app.status == 'pending'])
+    approved_applications = len([app for app in applications if app.status == 'approved'])
+    rejected_applications = len([app for app in applications if app.status == 'rejected'])
+
+    stats = {
+        'total': total_applications,
+        'pending': pending_applications,
+        'approved': approved_applications,
+        'rejected': rejected_applications
+    }
+
+    return render_template('admin_loan_applications.html',
+                         applications=applications,
+                         stats=stats,
+                         user=current_user)
+
+@app.route('/admin/review_loan/<int:loan_id>', methods=['POST'])
+@login_required
+def review_loan_application(loan_id):
+    """Admin route to approve/reject loan applications"""
+    if not current_user.is_admin:
+        return jsonify({'success': False, 'message': 'Access denied'}), 403
+
+    try:
+        loan_application = TopUpLoan.query.get_or_404(loan_id)
+        data = request.get_json()
+
+        action = data.get('action')  # 'approve' or 'reject'
+        admin_notes = data.get('notes', '')
+
+        if action == 'approve':
+            loan_application.status = 'approved'
+            message = 'Loan application approved successfully.'
+        elif action == 'reject':
+            loan_application.status = 'rejected'
+            loan_application.rejection_reason = 'admin_review'
+            message = 'Loan application rejected.'
+        else:
+            return jsonify({'success': False, 'message': 'Invalid action'})
+
+        loan_application.admin_review_notes = admin_notes
+        loan_application.review_date = datetime.utcnow()
+
+        db.session.commit()
+
+        # Send email notification
+        user = User.query.get(loan_application.user_id)
+        EmailService.send_loan_notification(
+            user_email=user.email,
+            user_name=user.username,
+            status=loan_application.status,
+            loan_amount=loan_application.loan_amount,
+            rejection_reason=loan_application.rejection_reason,
+            admin_notes=admin_notes
+        )
+
+        # Create system notification
+        notification = Notification(
+            user_id=user.id,
+            title=f'Loan Application {loan_application.status.title()}',
+            message=f'Your loan application has been {loan_application.status}.',
+            type='success' if loan_application.status == 'approved' else 'error'
+        )
+        db.session.add(notification)
+        db.session.commit()
+
+        return jsonify({'success': True, 'message': message})
+
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f"Error reviewing loan application: {str(e)}")
+        return jsonify({'success': False, 'message': 'An error occurred while processing the review.'})
 
 # Register ML blueprints
 try:
