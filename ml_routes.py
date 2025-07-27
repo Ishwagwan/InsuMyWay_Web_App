@@ -3,6 +3,7 @@ from flask import Blueprint, render_template, request, jsonify, flash, redirect,
 from flask_login import login_required, current_user
 import logging
 from datetime import datetime, timedelta
+from sqlalchemy import func
 
 from extensions import db
 from ai_recommendation_engine import TrueAIRecommendationEngine
@@ -271,12 +272,12 @@ def ml_analytics():
         # Get interaction trends (last 30 days)
         thirty_days_ago = datetime.utcnow() - timedelta(days=30)
         daily_interactions = db.session.query(
-            db.func.date(UserInteraction.timestamp).label('date'),
-            db.func.count(UserInteraction.id).label('count')
+            func.date(UserInteraction.timestamp).label('date'),
+            func.count(UserInteraction.id).label('count')
         ).filter(
             UserInteraction.timestamp >= thirty_days_ago
         ).group_by(
-            db.func.date(UserInteraction.timestamp)
+            func.date(UserInteraction.timestamp)
         ).all()
         
         analytics['interaction_trends'] = [
