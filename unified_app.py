@@ -15,7 +15,7 @@ from config import config
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-def create_app(config_name='development'):
+def create_app(config_name='production'):
     """Application factory pattern"""
     app = Flask(__name__)
     app.config.from_object(config[config_name])
