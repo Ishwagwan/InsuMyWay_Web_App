@@ -57,5 +57,34 @@ class Recommendation(db.Model):
 class Notification(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    title = db.Column(db.String(100))
     message = db.Column(db.String(255))
+    type = db.Column(db.String(20), default='info')  # success, warning, error, info
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+class TopUpLoan(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    age = db.Column(db.Integer, nullable=False)
+    monthly_income = db.Column(db.Float, nullable=False)  # in RWF
+    loan_amount = db.Column(db.Float, nullable=False)  # in RWF
+    status = db.Column(db.String(20), default='pending')  # pending, approved, rejected
+    application_date = db.Column(db.DateTime, default=datetime.utcnow)
+    review_date = db.Column(db.DateTime)
+    admin_review_notes = db.Column(db.Text)
+    loan_history_score = db.Column(db.String(20))  # good, insufficient, poor
+    rejection_reason = db.Column(db.String(100))  # age_ineligible, low_income, poor_history
+
+    user = db.relationship('User', backref='topup_loans')
+
+class LoanHistory(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    loan_type = db.Column(db.String(50), nullable=False)  # topup, personal, etc.
+    loan_amount = db.Column(db.Float, nullable=False)
+    repayment_status = db.Column(db.String(20), nullable=False)  # completed, defaulted, ongoing
+    loan_date = db.Column(db.DateTime, nullable=False)
+    completion_date = db.Column(db.DateTime)
+    repayment_score = db.Column(db.Integer, default=0)  # 0-100 score based on repayment behavior
+
+    user = db.relationship('User', backref='loan_history')
