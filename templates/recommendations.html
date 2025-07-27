@@ -167,7 +167,7 @@
                     ✓ Risk Level: {{ (rec.policy.risk_level.title() if rec.policy else rec.risk_level.title()) }}
                   </li>
                   <li style="padding: 4px 0; color: var(--text-secondary); font-size: 0.875rem;">
-                    ✓ Insurance Type: {{ (rec.policy.type.title() if rec.policy else rec.category.title()) }}
+                    ✓ Insurance Type: {{ (rec.policy.type.title() if rec.policy else rec.type.title()) }}
                   </li>
                   <li style="padding: 4px 0; color: var(--text-secondary); font-size: 0.875rem;">
                     ✓ Compatibility Score: {{ "%.0f" | format(rec.score) }}%
