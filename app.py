@@ -34,8 +34,8 @@ logger = logging.getLogger(__name__)
 app = Flask(__name__)
 app.secret_key = 'your-secret-key-123'  # Replace in production
 
-# Database configuration
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///insurance.db'
+# Database configuration - Using MySQL
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:@localhost:3306/insuremyway'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize extensions
@@ -405,12 +405,12 @@ def dashboard():
     # NEW: Calculate spending over time
     spending_query = (
         db.session.query(
-            func.strftime('%Y-%m', Purchase.purchase_date).label('month'),
+            func.date_format(Purchase.purchase_date, '%Y-%m').label('month'),
             func.sum(Product.price).label('total')
         )
         .join(Product, Purchase.product_id == Product.id)
         .filter(Purchase.user_id == session['user_id'])
-        .group_by(func.strftime('%Y-%m', Purchase.purchase_date))
+        .group_by(func.date_format(Purchase.purchase_date, '%Y-%m'))
         .order_by('month')
         .all()
     )
