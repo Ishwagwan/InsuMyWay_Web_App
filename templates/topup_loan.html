@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Top-Up Loan - InsureMyWay</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .form-container {
+            padding: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 1.1rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #4facfe;
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            border-left: 4px solid #4facfe;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 5px;
+        }
+
+        .info-box h3 {
+            color: #4facfe;
+            margin-bottom: 10px;
+        }
+
+        .info-box ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .info-box li {
+            padding: 5px 0;
+            color: #666;
+        }
+
+        .info-box li i {
+            color: #4facfe;
+            margin-right: 10px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(79, 172, 254, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            color: #4facfe;
+            text-decoration: none;
+            margin-bottom: 20px;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .back-btn:hover {
+            color: #00f2fe;
+        }
+
+        .back-btn i {
+            margin-right: 8px;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #4facfe;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .currency-input {
+            position: relative;
+        }
+
+        .currency-input::before {
+            content: 'RWF';
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            font-weight: 600;
+            z-index: 1;
+        }
+
+        .currency-input input {
+            padding-left: 60px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .form-container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-credit-card"></i> Account Top-Up Loan</h1>
+            <p>Quick and easy loan application process</p>
+        </div>
+
+        <div class="form-container">
+            <a href="{{ url_for('dashboard') }}" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+
+            <div class="info-box">
+                <h3><i class="fas fa-info-circle"></i> Loan Requirements</h3>
+                <ul>
+                    <li><i class="fas fa-check"></i> Must be at least 18 years old</li>
+                    <li><i class="fas fa-check"></i> Monthly income of at least 20,000 RWF</li>
+                    <li><i class="fas fa-check"></i> Good loan repayment history (if applicable)</li>
+                    <li><i class="fas fa-check"></i> Valid InsureMyWay account</li>
+                </ul>
+            </div>
+
+            <form id="loanApplicationForm">
+                <div class="form-group">
+                    <label for="age">
+                        <i class="fas fa-calendar-alt"></i> Your Age
+                    </label>
+                    <input type="number" id="age" name="age" min="16" max="100" required 
+                           placeholder="Enter your age">
+                </div>
+
+                <div class="form-group">
+                    <label for="monthly_income">
+                        <i class="fas fa-money-bill-wave"></i> Monthly Income
+                    </label>
+                    <div class="currency-input">
+                        <input type="number" id="monthly_income" name="monthly_income" 
+                               min="0" step="1000" required 
+                               placeholder="Enter your monthly income">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn" id="submitBtn">
+                    <i class="fas fa-paper-plane"></i> Apply for Loan
+                </button>
+            </form>
+
+            <div class="loading" id="loadingDiv">
+                <div class="spinner"></div>
+                <p>Processing your application...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('loanApplicationForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const age = parseInt(document.getElementById('age').value);
+            const monthlyIncome = parseFloat(document.getElementById('monthly_income').value);
+            const submitBtn = document.getElementById('submitBtn');
+            const loadingDiv = document.getElementById('loadingDiv');
+            
+            // Basic client-side validation
+            if (!age || !monthlyIncome) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Missing Information',
+                    text: 'Please fill in all required fields.',
+                    confirmButtonColor: '#4facfe'
+                });
+                return;
+            }
+
+            // Show loading state
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            loadingDiv.style.display = 'block';
+
+            try {
+                const response = await fetch('/apply_topup_loan', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        age: age,
+                        monthly_income: monthlyIncome,
+                        loan_amount: 50000 // Default loan amount
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    if (result.status === 'approved') {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Loan Approved!',
+                            text: result.message,
+                            confirmButtonColor: '#4facfe',
+                            confirmButtonText: 'Great!'
+                        }).then(() => {
+                            window.location.href = '/dashboard';
+                        });
+                    } else if (result.status === 'pending') {
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'Application Under Review',
+                            text: result.message,
+                            confirmButtonColor: '#4facfe',
+                            confirmButtonText: 'Understood'
+                        }).then(() => {
+                            window.location.href = '/dashboard';
+                        });
+                    } else if (result.status === 'rejected') {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Application Rejected',
+                            text: result.message,
+                            confirmButtonColor: '#4facfe',
+                            confirmButtonText: 'I Understand'
+                        });
+                    }
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Application Failed',
+                        text: result.message || 'An error occurred while processing your application.',
+                        confirmButtonColor: '#4facfe'
+                    });
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Network Error',
+                    text: 'Unable to process your application. Please check your connection and try again.',
+                    confirmButtonColor: '#4facfe'
+                });
+            } finally {
+                // Reset button state
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Apply for Loan';
+                loadingDiv.style.display = 'none';
+            }
+        });
+
+        // Real-time validation feedback
+        document.getElementById('age').addEventListener('input', function() {
+            const age = parseInt(this.value);
+            if (age && age < 18) {
+                this.style.borderColor = '#e74c3c';
+                if (!document.getElementById('age-warning')) {
+                    const warning = document.createElement('small');
+                    warning.id = 'age-warning';
+                    warning.style.color = '#e74c3c';
+                    warning.textContent = 'You must be at least 18 years old to apply.';
+                    this.parentNode.appendChild(warning);
+                }
+            } else {
+                this.style.borderColor = '#e1e5e9';
+                const warning = document.getElementById('age-warning');
+                if (warning) warning.remove();
+            }
+        });
+
+        document.getElementById('monthly_income').addEventListener('input', function() {
+            const income = parseFloat(this.value);
+            if (income && income < 20000) {
+                this.style.borderColor = '#e74c3c';
+                if (!document.getElementById('income-warning')) {
+                    const warning = document.createElement('small');
+                    warning.id = 'income-warning';
+                    warning.style.color = '#e74c3c';
+                    warning.textContent = 'Minimum monthly income required: 20,000 RWF';
+                    this.parentNode.appendChild(warning);
+                }
+            } else {
+                this.style.borderColor = '#e1e5e9';
+                const warning = document.getElementById('income-warning');
+                if (warning) warning.remove();
+            }
+        });
+    </script>
+</body>
+</html>
