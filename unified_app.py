@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from flask_bcrypt import Bcrypt
-from flask_mail import Mail, Message
+from flask_mail import Mail, Message as MailMessage
 from datetime import datetime
 import logging
 import os
@@ -56,9 +56,9 @@ bcrypt = Bcrypt(app)
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME', 'your-email@gmail.com')
-app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD', 'your-app-password')
-app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_DEFAULT_SENDER', 'InsureMyWay <noreply@insuremyway.com>')
+app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME', 'ishimwekevin108@gmail.com')
+app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD', 'beit mnui iibi pdqk')
+app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_DEFAULT_SENDER', 'InsureMyWay <ishimwekevin108@gmail.com>')
 
 mail = Mail(app)
 
@@ -265,7 +265,7 @@ Best regards,
 InsureMyWay Team
                 """
 
-            msg = Message(subject=subject, recipients=[user_email], body=body)
+            msg = MailMessage(subject=subject, recipients=[user_email], body=body)
             mail.send(msg)
             logger.info(f"Loan notification email sent to {user_email} for status: {status}")
             return True
