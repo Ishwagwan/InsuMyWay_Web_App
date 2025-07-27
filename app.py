@@ -144,8 +144,10 @@ def check_loan_history(user_id):
 app = Flask(__name__)
 app.secret_key = 'your-secret-key-123'  # Replace in production
 
-# Database configuration - Using SQLite for testing
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///insuremyway.db'
+# Database configuration - Using SQLite (pointing to the correct database file)
+import os
+basedir = os.path.abspath(os.path.dirname(__file__))
+app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(basedir, "instance", "insuremyway.db")}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Flask-Mail configuration
@@ -1275,11 +1277,10 @@ def seed_database():
 
 if __name__ == '__main__':
     with app.app_context():
-        # Drop all tables to ensure a fresh schema
-        logger.debug("Dropping all tables...")
-        db.drop_all()
-        logger.debug("Creating all tables...")
+        # Create tables if they don't exist (preserve existing data)
+        logger.debug("Creating tables if they don't exist...")
         db.create_all()
+
         # Verify table creation
         inspector = db.inspect(db.engine)
         tables = inspector.get_table_names()
@@ -1287,5 +1288,7 @@ if __name__ == '__main__':
         if 'user' in tables:
             columns = [col['name'] for col in inspector.get_columns('user')]
             logger.debug(f"Columns in 'user' table: {columns}")
+
+        # Only seed if database is empty (preserve existing users)
         seed_database()
     app.run(debug=True, port=5000, host='0.0.0.0')
