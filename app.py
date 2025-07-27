@@ -403,19 +403,24 @@ def dashboard():
     messages = Message.query.filter_by(user_id=session['user_id']).order_by(Message.timestamp.asc()).all()
 
     # NEW: Calculate spending over time
-    spending_query = (
-        db.session.query(
-            func.date_format(Purchase.purchase_date, '%Y-%m').label('month'),
-            func.sum(Product.price).label('total')
+    try:
+        spending_query = (
+            db.session.query(
+                func.date_format(Purchase.purchase_date, '%Y-%m').label('month'),
+                func.sum(Product.price).label('total')
+            )
+            .join(Product, Purchase.product_id == Product.id)
+            .filter(Purchase.user_id == session['user_id'])
+            .group_by(func.date_format(Purchase.purchase_date, '%Y-%m'))
+            .order_by('month')
+            .all()
         )
-        .join(Product, Purchase.product_id == Product.id)
-        .filter(Purchase.user_id == session['user_id'])
-        .group_by(func.date_format(Purchase.purchase_date, '%Y-%m'))
-        .order_by('month')
-        .all()
-    )
-    spending_labels = [f"{datetime.strptime(month, '%Y-%m').strftime('%b %Y')}" for month, _ in spending_query]
-    spending_data = [float(total) for _, total in spending_query]
+        spending_labels = [f"{datetime.strptime(month, '%Y-%m').strftime('%b %Y')}" for month, _ in spending_query if month]
+        spending_data = [float(total) for _, total in spending_query if total]
+    except Exception as e:
+        logger.error(f"Error calculating spending data: {e}")
+        spending_labels = []
+        spending_data = []
 
     # NEW: Calculate product type distribution
     type_counts = {'health': 0, 'auto': 0, 'home': 0}
@@ -814,6 +819,40 @@ def get_response():
         response += "- Home Insurance could be a good option.\n"
 
     return jsonify({'response': response})
+
+@app.route('/apply_topup_loan', methods=['GET', 'POST'])
+def apply_topup_loan():
+    """Placeholder route for top-up loan applications"""
+    if not session.get('user_id'):
+        return redirect(url_for('login'))
+
+    user = User.query.get(session['user_id'])
+    if not user:
+        return redirect(url_for('login'))
+
+    if request.method == 'POST':
+        # For now, just show a message that the feature is coming soon
+        flash('Loan application feature is currently under development. Please check back soon!', 'info')
+        return redirect(url_for('dashboard'))
+
+    # For GET requests, show a simple message or redirect
+    flash('Loan application feature is coming soon! Please contact support for assistance.', 'info')
+    return redirect(url_for('dashboard'))
+
+@app.route('/admin/loan_applications')
+def admin_loan_applications():
+    """Placeholder route for admin loan applications"""
+    if not session.get('user_id'):
+        return redirect(url_for('login'))
+
+    user = User.query.get(session['user_id'])
+    if not user or not user.is_admin:
+        flash('Access denied. Admin privileges required.', 'error')
+        return redirect(url_for('dashboard'))
+
+    # For now, just show a message that the feature is coming soon
+    flash('Loan management feature is currently under development. Please check back soon!', 'info')
+    return redirect(url_for('admin'))
 
 @app.route('/download_form')
 def download_form():
