@@ -25,9 +25,10 @@ class DevelopmentConfig(Config):
 class ProductionConfig(Config):
     """Production configuration"""
     DEBUG = False
+    # Use MySQL for production
     # In production, you should set these environment variables
-    SECRET_KEY = os.environ.get('SECRET_KEY')
-    MYSQL_PASSWORD = os.environ.get('MYSQL_PASSWORD')
+    SECRET_KEY = os.environ.get('SECRET_KEY') or 'your-secret-key-here-change-in-production'
+    MYSQL_PASSWORD = os.environ.get('MYSQL_PASSWORD') or ''
 
 class TestingConfig(Config):
     """Testing configuration"""
