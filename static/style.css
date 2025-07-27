@@ -1,0 +1,28 @@
+body {
+    font-family: Arial, sans-serif;
+}
+.card {
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.card-header {
+    background-color: #007bff;
+    color: white;
+    border-radius: 10px 10px 0 0;
+}
+.btn-primary {
+    background-color: #007bff;
+    border: none;
+}
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+.navbar {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.table {
+    background-color: #fff;
+}
+canvas {
+    max-width: 100%;
+}

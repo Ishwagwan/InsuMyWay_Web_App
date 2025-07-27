@@ -1,0 +1,405 @@
+{% extends "base.html" %}
+
+{% block title %}AI Recommendations - InsureMyWay{% endblock %}
+
+{% block content %}
+<div class="page-container">
+  <div class="page-header">
+    <h1 class="page-title">🤖 AI-Powered Recommendations</h1>
+    <p class="page-subtitle">Machine learning recommendations based on your profile and behavior</p>
+  </div>
+
+  <!-- Profile Completion & AI Quality Indicator -->
+  <div class="ai-quality-card">
+    <div class="ai-quality-header">
+      <div class="ai-quality-icon">
+        {% if rec_quality_level == 'excellent' %}
+        <i class="fas fa-brain" style="color: #10b981;"></i>
+        {% elif rec_quality_level == 'good' %}
+        <i class="fas fa-robot" style="color: #3b82f6;"></i>
+        {% elif rec_quality_level == 'fair' %}
+        <i class="fas fa-cog" style="color: #f59e0b;"></i>
+        {% else %}
+        <i class="fas fa-info-circle" style="color: #6b7280;"></i>
+        {% endif %}
+      </div>
+      <div class="ai-quality-content">
+        <h3>AI Recommendation Quality</h3>
+        <p>{{ rec_quality_message }}</p>
+      </div>
+      <div class="ai-quality-score">
+        <div class="quality-circle {{ rec_quality_level }}">
+          <span class="quality-percentage">{{ completion_percentage }}%</span>
+          <span class="quality-label">Profile</span>
+        </div>
+      </div>
+    </div>
+
+    {% if completion_percentage < 100 %}
+    <div class="ai-quality-actions">
+      <a href="{{ url_for('profile') }}" class="btn btn-primary">
+        <i class="fas fa-user-edit"></i>
+        Complete Profile for Better AI
+      </a>
+      <div class="quality-benefits">
+        <span class="benefit-item">🎯 More accurate recommendations</span>
+        <span class="benefit-item">🤖 Advanced AI personalization</span>
+        <span class="benefit-item">📊 Better price matching</span>
+      </div>
+    </div>
+
+    <!-- Quick Profile Tips -->
+    {% if completion_percentage < 70 %}
+    <div class="profile-tips">
+      <h4>💡 Quick Tips for Better AI Recommendations:</h4>
+      <div class="tips-grid">
+        <div class="tip-item">
+          <i class="fas fa-user"></i>
+          <span>Add your age and occupation</span>
+        </div>
+        <div class="tip-item">
+          <i class="fas fa-heart"></i>
+          <span>Share your lifestyle preferences</span>
+        </div>
+        <div class="tip-item">
+          <i class="fas fa-dollar-sign"></i>
+          <span>Include income and savings info</span>
+        </div>
+        <div class="tip-item">
+          <i class="fas fa-shield-alt"></i>
+          <span>Set your risk tolerance</span>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+    {% endif %}
+  </div>
+
+  <!-- Filter Section -->
+  <div class="card" style="margin-bottom: 40px;">
+    <div class="card-body" style="padding: 24px;">
+      <h4 style="margin-bottom: 20px; color: var(--text-primary);">Filter Recommendations</h4>
+      <form method="POST" style="display: flex; gap: 16px; align-items: end; flex-wrap: wrap;">
+        <div class="form-group" style="margin-bottom: 0; min-width: 200px;">
+          <label class="form-label">Insurance Type</label>
+          <select name="insurance_type" class="form-control">
+            <option value="all" {{ 'selected' if insurance_type == 'all' }}>All Types</option>
+            <option value="health" {{ 'selected' if insurance_type == 'health' }}>Health Insurance</option>
+            <option value="auto" {{ 'selected' if insurance_type == 'auto' }}>Auto Insurance</option>
+            <option value="home" {{ 'selected' if insurance_type == 'home' }}>Home Insurance</option>
+            <option value="life" {{ 'selected' if insurance_type == 'life' }}>Life Insurance</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 0; min-width: 150px;">
+          <label class="form-label">Max Budget</label>
+          <input type="number" name="max_budget" class="form-control"
+                 placeholder="Enter budget"
+                 value="{{ max_budget if max_budget is not none else '' }}"
+                 min="0" step="10">
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="height: fit-content;">
+          Apply Filters
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Recommendations Grid -->
+  {% if recommendations %}
+    <div style="display: flex; flex-wrap: wrap; gap: 30px; justify-content: center;">
+      {% for rec in recommendations %}
+        <div class="card" style="width: 350px; position: relative;">
+          <!-- Recommendation Score Badge -->
+          <div style="position: absolute; top: -10px; right: 20px; background: linear-gradient(135deg, var(--secondary-gold), var(--secondary-gold-light)); color: white; padding: 8px 16px; border-radius: 20px; font-weight: 700; font-size: 0.875rem; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);">
+            {{ "%.0f" | format(rec.score) }}% Match
+          </div>
+
+          <div class="card-header">
+            <h3 style="margin: 0; font-size: 1.25rem;">{{ rec.policy.name if rec.policy else rec.name }}</h3>
+          </div>
+
+          <div class="card-body">
+            <div style="margin-bottom: 24px;">
+              <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 20px;">
+                {{ rec.policy.coverage if rec.policy else rec.description }}
+              </p>
+
+              <!-- Affordability Indicator -->
+              {% if rec.affordability %}
+              <div style="margin-bottom: 16px; padding: 12px; border-radius: 8px;
+                         {% if rec.affordability == 'Very Affordable' %}background-color: #dcfce7; border: 1px solid #16a34a;{% elif rec.affordability == 'Affordable' %}background-color: #fef3c7; border: 1px solid #f59e0b;{% elif rec.affordability == 'Moderate' %}background-color: #fef3c7; border: 1px solid #f59e0b;{% else %}background-color: #fee2e2; border: 1px solid #dc2626;{% endif %}">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="font-weight: 600;
+                              {% if rec.affordability == 'Very Affordable' %}color: #16a34a;{% elif rec.affordability == 'Affordable' %}color: #f59e0b;{% elif rec.affordability == 'Moderate' %}color: #f59e0b;{% else %}color: #dc2626;{% endif %}">
+                    💰 {{ rec.affordability }}
+                  </span>
+                </div>
+              </div>
+              {% endif %}
+
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 16px; background-color: var(--background-secondary); border-radius: 8px;">
+                <span style="color: var(--text-secondary); font-weight: 500;">Monthly Premium</span>
+                <span style="font-size: 1.5rem; font-weight: 700; color: var(--primary-blue);">
+                  {{ (rec.policy.premium if rec.policy else rec.price) | to_frw }}
+                </span>
+              </div>
+
+              <!-- Recommendation Reasoning -->
+              {% if rec.reason %}
+              <div style="margin-bottom: 20px; padding: 16px; background-color: #f0f9ff; border-left: 4px solid var(--primary-blue); border-radius: 0 8px 8px 0;">
+                <h6 style="margin: 0 0 8px 0; color: var(--primary-blue); font-weight: 600;">Why this matches you:</h6>
+                <p style="margin: 0; color: var(--text-secondary); font-size: 0.875rem; line-height: 1.5;">
+                  {{ rec.reason }}
+                </p>
+              </div>
+              {% endif %}
+
+              <!-- Features List -->
+              <div style="margin-bottom: 24px;">
+                <h5 style="margin-bottom: 12px; color: var(--text-primary); font-size: 1rem;">Key Features:</h5>
+                <ul style="list-style: none; padding: 0; margin: 0;">
+                  <li style="padding: 4px 0; color: var(--text-secondary); font-size: 0.875rem;">
+                    ✓ Age Range: {{ (rec.policy.min_age if rec.policy else rec.min_age) }}-{{ (rec.policy.max_age if rec.policy else rec.max_age) }} years
+                  </li>
+                  <li style="padding: 4px 0; color: var(--text-secondary); font-size: 0.875rem;">
+                    ✓ Risk Level: {{ (rec.policy.risk_level.title() if rec.policy else rec.risk_level.title()) }}
+                  </li>
+                  <li style="padding: 4px 0; color: var(--text-secondary); font-size: 0.875rem;">
+                    ✓ Insurance Type: {{ (rec.policy.type.title() if rec.policy else rec.category.title()) }}
+                  </li>
+                  <li style="padding: 4px 0; color: var(--text-secondary); font-size: 0.875rem;">
+                    ✓ Compatibility Score: {{ "%.0f" | format(rec.score) }}%
+                  </li>
+                  <li style="padding: 4px 0; color: var(--text-secondary); font-size: 0.875rem;">
+                    ✓ 24/7 Customer Support
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <form action="{{ url_for('purchase', product_id=(rec.policy.id if rec.policy else rec.id)) }}" method="POST">
+              <button type="submit" class="btn btn-primary" style="width: 100%;">
+                Purchase This Plan
+              </button>
+            </form>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="card">
+      <div class="card-body" style="text-align: center; padding: 60px 40px;">
+        <div style="font-size: 3rem; margin-bottom: 20px; opacity: 0.3;">🔍</div>
+        <h3 style="margin-bottom: 16px; color: var(--text-primary);">No Recommendations Found</h3>
+        <p style="color: var(--text-secondary); margin-bottom: 32px; max-width: 400px; margin-left: auto; margin-right: auto;">
+          We couldn't find any insurance plans matching your current criteria. Try adjusting your filters or updating your profile for better recommendations.
+        </p>
+        <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+          <a href="{{ url_for('profile') }}" class="btn btn-primary">
+            Update Profile
+          </a>
+          <a href="{{ url_for('products') }}" class="btn btn-outline">
+            Browse All Products
+          </a>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+</div>
+
+<style>
+  .card {
+    transition: all 0.3s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px var(--shadow-medium);
+  }
+
+  /* AI Quality Card Styles */
+  .ai-quality-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 32px;
+    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+  }
+
+  .ai-quality-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+
+  .ai-quality-icon {
+    width: 60px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+
+  .ai-quality-content {
+    flex: 1;
+  }
+
+  .ai-quality-content h3 {
+    margin: 0 0 8px 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+
+  .ai-quality-content p {
+    margin: 0;
+    opacity: 0.9;
+    font-size: 1.125rem;
+  }
+
+  .ai-quality-score {
+    flex-shrink: 0;
+  }
+
+  .quality-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+  }
+
+  .quality-circle.excellent {
+    background: linear-gradient(135deg, #10b981, #059669);
+  }
+
+  .quality-circle.good {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+  }
+
+  .quality-circle.fair {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+  }
+
+  .quality-circle.basic {
+    background: linear-gradient(135deg, #6b7280, #4b5563);
+  }
+
+  .quality-percentage {
+    font-size: 1.25rem;
+    line-height: 1;
+  }
+
+  .quality-label {
+    font-size: 0.75rem;
+    opacity: 0.9;
+  }
+
+  .ai-quality-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .quality-benefits {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .benefit-item {
+    font-size: 0.875rem;
+    opacity: 0.9;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 6px 12px;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+  }
+
+  /* Profile Tips Styles */
+  .profile-tips {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .profile-tips h4 {
+    margin: 0 0 16px 0;
+    font-size: 1.125rem;
+    opacity: 0.9;
+  }
+
+  .tips-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+  }
+
+  .tip-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    backdrop-filter: blur(10px);
+    font-size: 0.875rem;
+    opacity: 0.9;
+  }
+
+  .tip-item i {
+    color: var(--secondary-gold, #fbbf24);
+    font-size: 1rem;
+  }
+
+  @media (max-width: 768px) {
+    .ai-quality-header {
+      flex-direction: column;
+      text-align: center;
+      gap: 16px;
+    }
+
+    .ai-quality-actions {
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .quality-benefits {
+      justify-content: center;
+    }
+
+    .page-container form {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .page-container form .form-group {
+      min-width: auto;
+    }
+
+    .page-container > div:last-of-type {
+      justify-content: center;
+    }
+
+    .page-container > div:last-of-type > div {
+      width: 100%;
+      max-width: 400px;
+    }
+  }
+</style>
+{% endblock %}

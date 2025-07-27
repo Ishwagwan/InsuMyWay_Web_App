@@ -1,0 +1,2760 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - InsureMyWay{% endblock %}
+
+{% block content %}
+<!-- Dashboard Layout with Side Navigation -->
+<div class="dashboard-layout">
+  <!-- Side Navigation -->
+  <nav class="sidebar">
+    <div class="sidebar-header">
+      <a href="{{ url_for('index') }}" class="sidebar-brand">
+        <img src="{{ url_for('static', filename='images/logo_insuremyway.jpg') }}" alt="InsureMyWay Logo" class="sidebar-logo">
+        <span class="sidebar-brand-text">InsureMyWay</span>
+      </a>
+    </div>
+
+    <div class="sidebar-content">
+      <!-- User Profile Section -->
+      <div class="sidebar-user">
+        <div class="user-avatar">
+          <i class="fas fa-user-circle"></i>
+        </div>
+        <div class="user-info">
+          <h4>{{ user.username }}</h4>
+          <p>Welcome back!</p>
+        </div>
+      </div>
+
+      <!-- Navigation Menu -->
+      <div class="sidebar-menu">
+        <div class="menu-section">
+          <h5 class="menu-title">Main</h5>
+          <a href="{{ url_for('dashboard') }}" class="menu-item active">
+            <i class="fas fa-tachometer-alt" aria-hidden="true"></i>
+            <span>Dashboard Overview</span>
+          </a>
+          <a href="{{ url_for('profile') }}" class="menu-item">
+            <i class="fas fa-user-cog" aria-hidden="true"></i>
+            <span>My Profile</span>
+          </a>
+        </div>
+
+        <div class="menu-section">
+          <h5 class="menu-title">Insurance Activities</h5>
+          <a href="{{ url_for('recommendations') }}" class="menu-item">
+            <i class="fas fa-robot" aria-hidden="true"></i>
+            <span>AI Recommendations</span>
+          </a>
+          <a href="{{ url_for('products') }}" class="menu-item">
+            <i class="fas fa-umbrella" aria-hidden="true"></i>
+            <span>Insurance Products</span>
+          </a>
+          <a href="#chat-dashboard" class="menu-item" onclick="scrollToSection('chat-dashboard')">
+            <i class="fas fa-comment-dots" aria-hidden="true"></i>
+            <span>Chat Support</span>
+          </a>
+          <a href="#purchase-history" class="menu-item" onclick="scrollToSection('purchase-history')">
+            <i class="fas fa-shopping-bag" aria-hidden="true"></i>
+            <span>Purchase History</span>
+          </a>
+          <a href="#" class="menu-item">
+            <i class="fas fa-file-invoice-dollar" aria-hidden="true"></i>
+            <span>Claims Management</span>
+          </a>
+          <a href="#" class="menu-item">
+            <i class="fas fa-credit-card" aria-hidden="true"></i>
+            <span>Account Top Up</span>
+          </a>
+        </div>
+
+        {% if current_user.is_admin %}
+        <div class="menu-section">
+          <h5 class="menu-title">Administration</h5>
+          <a href="{{ url_for('admin') }}" class="menu-item admin-item">
+            <i class="fas fa-tools" aria-hidden="true"></i>
+            <span>Admin Panel</span>
+          </a>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Logout Button -->
+      <div class="sidebar-footer">
+        <a href="{{ url_for('logout') }}" class="logout-btn">
+          <i class="fas fa-sign-out-alt"></i>
+          <span>Logout</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Top Header -->
+    <div class="content-header">
+      <div class="header-left">
+        <button class="sidebar-toggle" id="sidebarToggle">
+          <i class="fas fa-bars"></i>
+        </button>
+        <h1>Dashboard</h1>
+      </div>
+      <div class="header-right">
+        <div class="header-actions">
+          <button class="header-btn">
+            <i class="fas fa-bell"></i>
+            <span class="notification-badge">3</span>
+          </button>
+          <button class="header-btn">
+            <i class="fas fa-search"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dashboard Content -->
+    <div class="dashboard-content">
+      <!-- Personalized Content Section -->
+      <div class="personalized-section">
+        <div class="section-header">
+          <h2>Personalized for You</h2>
+          <p>Based on your profile and preferences</p>
+        </div>
+
+        <div class="personalized-grid">
+          <!-- Lifestyle-based Recommendations -->
+          {% if user.lifestyle %}
+          <div class="lifestyle-card">
+            <div class="lifestyle-header">
+              <i class="fas fa-heart"></i>
+              <h3>{{ user.lifestyle.title() }} Lifestyle</h3>
+            </div>
+            <div class="lifestyle-content">
+              {% if user.lifestyle == 'active' %}
+              <p>🏃‍♂️ Stay protected during your active adventures!</p>
+              <div class="lifestyle-suggestions">
+                <div class="suggestion-item">
+                  <i class="fas fa-running"></i>
+                  <span>Sports Injury Coverage</span>
+                </div>
+                <div class="suggestion-item">
+                  <i class="fas fa-bicycle"></i>
+                  <span>Adventure Sports Insurance</span>
+                </div>
+              </div>
+              {% elif user.lifestyle == 'family-oriented' %}
+              <p>👨‍👩‍👧‍👦 Protect what matters most - your family!</p>
+              <div class="lifestyle-suggestions">
+                <div class="suggestion-item">
+                  <i class="fas fa-home"></i>
+                  <span>Family Health Plans</span>
+                </div>
+                <div class="suggestion-item">
+                  <i class="fas fa-graduation-cap"></i>
+                  <span>Education Insurance</span>
+                </div>
+              </div>
+              {% elif user.lifestyle == 'professional' %}
+              <p>💼 Professional coverage for your career!</p>
+              <div class="lifestyle-suggestions">
+                <div class="suggestion-item">
+                  <i class="fas fa-briefcase"></i>
+                  <span>Professional Liability</span>
+                </div>
+                <div class="suggestion-item">
+                  <i class="fas fa-laptop"></i>
+                  <span>Equipment Protection</span>
+                </div>
+              </div>
+              {% else %}
+              <p>🌟 Discover insurance that fits your lifestyle!</p>
+              <div class="lifestyle-suggestions">
+                <div class="suggestion-item">
+                  <i class="fas fa-shield-alt"></i>
+                  <span>Basic Health Coverage</span>
+                </div>
+                <div class="suggestion-item">
+                  <i class="fas fa-car"></i>
+                  <span>Auto Insurance</span>
+                </div>
+              </div>
+              {% endif %}
+              <a href="{{ url_for('recommendations') }}" class="lifestyle-cta">
+                View Personalized Plans
+              </a>
+            </div>
+          </div>
+          {% endif %}
+
+          <!-- Age-based Suggestions -->
+          {% if user.age %}
+          <div class="age-insights-card">
+            <div class="age-header">
+              <i class="fas fa-calendar-alt"></i>
+              <h3>Age {{ user.age }} Insights</h3>
+            </div>
+            <div class="age-content">
+              {% if user.age < 30 %}
+              <p>🚀 Young Professional Benefits</p>
+              <ul class="age-benefits">
+                <li>Lower premium rates</li>
+                <li>Long-term investment plans</li>
+                <li>Career protection coverage</li>
+              </ul>
+              {% elif user.age < 50 %}
+              <p>🏡 Family & Career Focus</p>
+              <ul class="age-benefits">
+                <li>Family health coverage</li>
+                <li>Mortgage protection</li>
+                <li>Retirement planning</li>
+              </ul>
+              {% else %}
+              <p>🌅 Senior Benefits</p>
+              <ul class="age-benefits">
+                <li>Senior health plans</li>
+                <li>Legacy protection</li>
+                <li>Comprehensive coverage</li>
+              </ul>
+              {% endif %}
+            </div>
+          </div>
+          {% endif %}
+
+          <!-- Occupation-based Recommendations -->
+          {% if user.occupation %}
+          <div class="occupation-card">
+            <div class="occupation-header">
+              <i class="fas fa-briefcase"></i>
+              <h3>{{ user.occupation.title() }} Specific</h3>
+            </div>
+            <div class="occupation-content">
+              <p>💼 Tailored for your profession</p>
+              <div class="occupation-features">
+                <div class="feature-item">
+                  <i class="fas fa-check-circle"></i>
+                  <span>Industry-specific coverage</span>
+                </div>
+                <div class="feature-item">
+                  <i class="fas fa-check-circle"></i>
+                  <span>Professional liability</span>
+                </div>
+                <div class="feature-item">
+                  <i class="fas fa-check-circle"></i>
+                  <span>Income protection</span>
+                </div>
+              </div>
+              <button class="occupation-btn" onclick="showOccupationPlans()">
+                Explore Professional Plans
+              </button>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Dashboard Cards Grid -->
+      <div class="dashboard-grid">
+        <!-- Profile Completion Card -->
+        <div class="dashboard-card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="fas fa-user-circle"></i>
+              <h3>Profile Completion</h3>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="progress-section">
+              <div class="progress-info">
+                <span class="progress-percentage">{{ completion_percentage }}% Complete</span>
+                <span class="progress-fraction">{{ completion_percentage }}/100</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: {{ completion_percentage }}%;"></div>
+              </div>
+            </div>
+            <div class="card-actions">
+              {% if completion_percentage >= 50 %}
+              <a href="{{ url_for('recommendations') }}" class="btn btn-primary">
+                <i class="fas fa-robot"></i>
+                Get AI Recommendations
+              </a>
+              <a href="{{ url_for('profile') }}" class="btn btn-outline">
+                <i class="fas fa-edit"></i>
+                {% if completion_percentage == 100 %}Update Profile{% else %}Improve Profile{% endif %}
+              </a>
+              {% else %}
+              <a href="{{ url_for('profile') }}" class="btn btn-primary">
+                <i class="fas fa-edit"></i>
+                Complete Profile for AI
+              </a>
+              {% endif %}
+            </div>
+            {% if completion_percentage < 100 %}
+            <p class="card-description">
+              <i class="fas fa-robot"></i>
+              Complete your profile to unlock AI-powered personalized recommendations.
+            </p>
+            {% else %}
+            <p class="card-description success">
+              <i class="fas fa-check-circle"></i>
+              Perfect! Your profile enables advanced AI recommendations.
+            </p>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Profile Summary Card -->
+        <div class="dashboard-card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="fas fa-user"></i>
+              <h3>Profile Summary</h3>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="profile-details">
+              <div class="detail-item">
+                <span class="detail-label">Email:</span>
+                <span class="detail-value">{{ user.email or 'Not provided' }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Username:</span>
+                <span class="detail-value">{{ user.username }}</span>
+              </div>
+              {% if user.age %}
+              <div class="detail-item">
+                <span class="detail-label">Age:</span>
+                <span class="detail-value">{{ user.age }} years</span>
+              </div>
+              {% endif %}
+              {% if user.occupation %}
+              <div class="detail-item">
+                <span class="detail-label">Occupation:</span>
+                <span class="detail-value">{{ user.occupation.title() }}</span>
+              </div>
+              {% endif %}
+            </div>
+            <div class="card-actions">
+              <a href="{{ url_for('profile') }}" class="btn btn-outline">
+                <i class="fas fa-edit"></i>
+                Update Profile
+              </a>
+            </div>
+          </div>
+        </div>
+                 
+      <!-- Personalized Insights Section -->
+      <div class="insights-section">
+        <div class="section-header">
+          <h2>Your Insurance Insights</h2>
+          <p>Smart recommendations based on your data</p>
+        </div>
+
+        <div class="insights-grid">
+          <!-- Risk Assessment Card -->
+          <div class="insight-card risk-card">
+            <div class="insight-header">
+              <i class="fas fa-shield-alt"></i>
+              <h3>Risk Assessment</h3>
+            </div>
+            <div class="insight-content">
+              {% if user.risk_tolerance %}
+              <div class="risk-level {{ user.risk_tolerance }}">
+                <span class="risk-indicator"></span>
+                <span class="risk-text">{{ user.risk_tolerance.title() }} Risk Profile</span>
+              </div>
+              <div class="risk-recommendations">
+                {% if user.risk_tolerance == 'low' %}
+                <p>🛡️ Conservative approach recommended</p>
+                <ul>
+                  <li>Comprehensive health coverage</li>
+                  <li>Life insurance with guaranteed returns</li>
+                  <li>Stable investment plans</li>
+                </ul>
+                {% elif user.risk_tolerance == 'medium' %}
+                <p>⚖️ Balanced protection strategy</p>
+                <ul>
+                  <li>Mixed investment portfolios</li>
+                  <li>Flexible premium plans</li>
+                  <li>Moderate coverage limits</li>
+                </ul>
+                {% else %}
+                <p>🚀 Growth-oriented protection</p>
+                <ul>
+                  <li>High-yield investment plans</li>
+                  <li>Variable premium options</li>
+                  <li>Aggressive growth strategies</li>
+                </ul>
+                {% endif %}
+              </div>
+              {% else %}
+              <p>📊 Complete your profile to get personalized risk assessment</p>
+              <a href="{{ url_for('profile') }}" class="btn btn-outline">Update Risk Profile</a>
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- Financial Health Card -->
+          <div class="insight-card financial-card">
+            <div class="insight-header">
+              <i class="fas fa-chart-line"></i>
+              <h3>Financial Health</h3>
+            </div>
+            <div class="insight-content">
+              {% if user.annual_income and user.savings_level %}
+              <div class="financial-score">
+                <div class="score-circle">
+                  <span class="score-number">
+                    {% if user.savings_level == 'high' %}85{% elif user.savings_level == 'medium' %}70{% else %}55{% endif %}
+                  </span>
+                  <span class="score-label">Score</span>
+                </div>
+                <div class="score-details">
+                  <p>{{ user.savings_level.title() }} savings level</p>
+                  <div class="financial-tips">
+                    {% if user.savings_level == 'high' %}
+                    <span class="tip">💰 Consider premium investment plans</span>
+                    {% elif user.savings_level == 'medium' %}
+                    <span class="tip">📈 Balance protection and growth</span>
+                    {% else %}
+                    <span class="tip">🎯 Focus on essential coverage first</span>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+              {% else %}
+              <div class="financial-prompt">
+                <i class="fas fa-calculator"></i>
+                <p>Add your financial details for personalized recommendations</p>
+                <a href="{{ url_for('profile') }}" class="btn btn-primary">Update Financial Info</a>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- Lifestyle Trends Card -->
+          <div class="insight-card trends-card">
+            <div class="insight-header">
+              <i class="fas fa-trending-up"></i>
+              <h3>Trending for You</h3>
+            </div>
+            <div class="insight-content">
+              <div class="trend-items">
+                {% if user.age and user.age < 35 %}
+                <div class="trend-item hot">
+                  <i class="fas fa-fire"></i>
+                  <div>
+                    <h4>Digital Health Plans</h4>
+                    <p>Popular among young professionals</p>
+                  </div>
+                  <span class="trend-badge">Hot</span>
+                </div>
+                {% endif %}
+
+                {% if user.lifestyle == 'active' %}
+                <div class="trend-item trending">
+                  <i class="fas fa-chart-line"></i>
+                  <div>
+                    <h4>Adventure Sports Coverage</h4>
+                    <p>Growing demand this season</p>
+                  </div>
+                  <span class="trend-badge">Trending</span>
+                </div>
+                {% endif %}
+
+                <div class="trend-item new">
+                  <i class="fas fa-star"></i>
+                  <div>
+                    <h4>AI-Powered Health Monitoring</h4>
+                    <p>Latest in preventive care</p>
+                  </div>
+                  <span class="trend-badge">New</span>
+                </div>
+              </div>
+              <button class="trends-btn" onclick="showTrendingPlans()">
+                Explore Trending Plans
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+  <!-- Purchase History Section -->
+  <div id="purchase-history" class="card" style="margin-bottom: 60px;">
+    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+      <h3 style="margin: 0; font-size: 1.25rem;">Purchase History</h3>
+      <div class="dashboard-search-container">
+        <div class="dashboard-search-wrapper">
+          <i class="fas fa-search dashboard-search-icon"></i>
+          <input type="text" id="purchaseHistorySearch" placeholder="Search your purchases..." class="dashboard-search-input">
+          <button type="button" id="clearPurchaseHistorySearch" class="dashboard-clear-btn" style="display: none;">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      {% if purchases %}
+        <div style="overflow-x: auto;">
+          <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+              <tr style="border-bottom: 2px solid var(--border-color);">
+                <th style="text-align: left; padding: 12px 0; color: var(--text-secondary); font-weight: 600;">Product</th>
+                <th style="text-align: left; padding: 12px 0; color: var(--text-secondary); font-weight: 600;">Price</th>
+                <th style="text-align: left; padding: 12px 0; color: var(--text-secondary); font-weight: 600;">Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for purchase in purchases %}
+              <tr style="border-bottom: 1px solid var(--border-color);">
+                <td style="padding: 16px 0; font-weight: 600;">{{ purchase.product.name }}</td>
+                <td style="padding: 16px 0; color: var(--success-green); font-weight: 600;">{{ purchase.amount | to_frw }}</td>
+                <td style="padding: 16px 0; color: var(--text-secondary);">{{ purchase.purchase_date.strftime('%Y-%m-%d') }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <div style="text-align: center; padding: 40px 0; color: var(--text-secondary);">
+          <p style="font-size: 1.125rem; margin-bottom: 24px;">No purchases yet</p>
+          <a href="{{ url_for('products') }}" class="btn btn-primary">
+            Browse Insurance Products
+          </a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Support Chat Section -->
+  <div id="chat-dashboard" class="card">
+    <div class="card-header">
+      <h3 style="margin: 0; font-size: 1.25rem;">Chat Dashboard</h3>
+    </div>
+    <div class="card-body">
+      <div style="height: 400px; display: flex; flex-direction: column;">
+        <div id="chat-messages" style="flex: 1; overflow-y: auto; padding: 20px; background-color: var(--background-secondary); border-radius: 8px; margin-bottom: 16px;">
+          {% for message in messages %}
+            <div class="chat-message-wrapper {{ 'user-message-wrapper' if not message.is_from_admin else 'admin-message-wrapper' }}">
+              <div class="chat-message {{ 'user-message' if not message.is_from_admin else 'admin-message' }}">
+                <div>{{ message.content }}</div>
+                <div class="message-timestamp">
+                  {{ message.timestamp|local_time }}
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+        <div style="display: flex; gap: 12px;">
+          <input type="text" id="chat-input" placeholder="Type your message..."
+                 style="flex: 1; padding: 12px 16px; border: 2px solid var(--border-color); border-radius: 8px; background-color: var(--background-color); color: var(--text-primary);">
+          <button onclick="sendMessage()" class="btn btn-primary" style="min-width: 80px;">
+            Send
+          </button>
+        </div>
+      </div>
+    </div>
+    </div>
+    </div>
+    </div>
+  </main>
+</div>
+
+<style>
+  /* Dashboard Layout */
+  .dashboard-layout {
+    display: flex;
+    min-height: 100vh;
+    background-color: var(--background-color, #f8fafc);
+  }
+
+  /* Sidebar Styles */
+  .sidebar {
+    width: 280px;
+    background: linear-gradient(180deg,
+      var(--primary-blue, #4f46e5) 0%,
+      var(--primary-blue-dark, #3730a3) 50%,
+      #2d1b69 100%);
+    color: white;
+    position: fixed;
+    height: 100vh;
+    left: 0;
+    top: 0;
+    z-index: 1000;
+    overflow-y: auto;
+    transition: transform 0.3s ease;
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .sidebar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .sidebar-header {
+    padding: 24px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: white;
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .sidebar-brand:hover {
+    opacity: 0.9;
+    color: white;
+  }
+
+  .sidebar-logo {
+    height: 40px;
+    width: 40px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .sidebar-brand-text {
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+  }
+
+  .sidebar-content {
+    padding: 20px 0;
+    height: calc(100vh - 88px);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sidebar-user {
+    padding: 0 20px 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 24px;
+  }
+
+  .user-avatar {
+    text-align: center;
+    margin-bottom: 12px;
+  }
+
+  .user-avatar i {
+    font-size: 3rem;
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .user-info {
+    text-align: center;
+  }
+
+  .user-info h4 {
+    margin: 0 0 4px 0;
+    font-size: 1.125rem;
+    font-weight: 600;
+  }
+
+  .user-info p {
+    margin: 0;
+    font-size: 0.875rem;
+    opacity: 0.8;
+  }
+
+  .sidebar-menu {
+    flex: 1;
+    padding: 0 12px;
+  }
+
+  .menu-section {
+    margin-bottom: 32px;
+    position: relative;
+  }
+
+  .menu-section::after {
+    content: '';
+    position: absolute;
+    bottom: -16px;
+    left: 16px;
+    right: 16px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  }
+
+  .menu-section:last-child::after {
+    display: none;
+  }
+
+  .menu-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: rgba(255, 255, 255, 0.7);
+    margin: 0 0 16px 16px;
+    position: relative;
+    padding-left: 8px;
+  }
+
+  .menu-title::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 12px;
+    background: var(--secondary-gold, #f59e0b);
+    border-radius: 2px;
+  }
+
+  .menu-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    border-radius: 10px;
+    margin-bottom: 6px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-weight: 500;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .menu-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 0;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+    transition: width 0.3s ease;
+    z-index: 0;
+  }
+
+  .menu-item span,
+  .menu-item i {
+    position: relative;
+    z-index: 1;
+  }
+
+  .menu-item:hover {
+    background-color: rgba(255, 255, 255, 0.12);
+    color: white;
+    transform: translateX(6px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .menu-item:hover::before {
+    width: 100%;
+  }
+
+  .menu-item.active {
+    background-color: rgba(255, 255, 255, 0.18);
+    color: white;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    transform: translateX(2px);
+  }
+
+  .menu-item.active::before {
+    width: 100%;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.08));
+  }
+
+  .menu-item.admin-item {
+    background-color: var(--secondary-gold, #f59e0b);
+    color: white;
+  }
+
+  .menu-item.admin-item:hover {
+    background-color: var(--secondary-gold-light, #fbbf24);
+  }
+
+
+
+  /* Enhanced icon styling for better visual representation */
+  .menu-item:hover i {
+    transform: scale(1.1);
+    filter: brightness(1.2);
+  }
+
+  /* Ensure icons are visible and properly styled */
+  .menu-item i {
+    font-size: 1.125rem !important;
+    width: 20px;
+    text-align: center;
+    transition: all 0.2s ease;
+    display: inline-block !important;
+    position: relative;
+    z-index: 2;
+    color: rgba(255, 255, 255, 0.9) !important;
+    font-family: "Font Awesome 6 Free" !important;
+    font-weight: 900 !important;
+  }
+
+  /* Fallback for icon visibility */
+  .sidebar .menu-item i {
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
+  /* Specific icon colors for better visual distinction */
+  .menu-item .fa-tachometer-alt {
+    color: #60a5fa !important; /* Light blue for dashboard analytics */
+  }
+
+  .menu-item .fa-user-cog {
+    color: #a78bfa !important; /* Light purple for user profile settings */
+  }
+
+  .menu-item .fa-robot {
+    color: #34d399 !important; /* Bright green for AI/technology */
+    text-shadow: 0 0 8px rgba(52, 211, 153, 0.3);
+  }
+
+  .menu-item .fa-umbrella {
+    color: #fbbf24 !important; /* Golden yellow for insurance protection */
+  }
+
+  .menu-item .fa-comment-dots {
+    color: #60a5fa !important; /* Blue for communication/chat */
+  }
+
+  .menu-item .fa-shopping-bag {
+    color: #f472b6 !important; /* Pink for purchases/shopping */
+  }
+
+  .menu-item .fa-file-invoice-dollar {
+    color: #fb923c !important; /* Orange for financial documents/claims */
+  }
+
+  .menu-item .fa-credit-card {
+    color: #10b981 !important; /* Green for financial transactions */
+  }
+
+  .menu-item .fa-tools {
+    color: #ef4444 !important; /* Red for admin tools */
+  }
+
+  /* Special glow effect for AI Recommendations */
+  .menu-item:hover .fa-robot {
+    color: #6ee7b7 !important;
+    text-shadow: 0 0 12px rgba(52, 211, 153, 0.5);
+    transform: scale(1.15);
+  }
+
+  /* Enhanced hover effects for insurance-specific icons */
+  .menu-item:hover .fa-umbrella {
+    color: #fcd34d !important;
+    transform: scale(1.1) rotate(5deg);
+  }
+
+  .menu-item:hover .fa-comment-dots {
+    color: #93c5fd !important;
+    animation: pulse-chat 1.5s infinite;
+  }
+
+  @keyframes pulse-chat {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
+
+  .sidebar-footer {
+    padding: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .logout-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    text-decoration: none;
+    border-radius: 8px;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    transition: all 0.2s ease;
+    font-weight: 500;
+  }
+
+  .logout-btn:hover {
+    background-color: rgba(239, 68, 68, 0.2);
+    border-color: rgba(239, 68, 68, 0.5);
+    color: #ef4444;
+  }
+
+  /* Main Content Area */
+  .main-content {
+    flex: 1;
+    margin-left: 280px;
+    min-height: 100vh;
+    background-color: var(--background-color, #0c0e0f);
+  }
+
+  .content-header {
+    background: rgb(40, 14, 14);
+    padding: 20px 32px;
+    border-bottom: 1px solid var(--border-color, #161e2c);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .sidebar-toggle {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 1.25rem;
+    color: var(--text-primary, #1f2937);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+  }
+
+  .sidebar-toggle:hover {
+    background-color: var(--background-secondary, #0b0e14);
+  }
+
+  .content-header h1 {
+    margin: 0;
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: var(--text-primary, #0e0ee5);
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .header-btn {
+    position: relative;
+    background: none;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    color: var(--text-secondary, #6b7280);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .header-btn:hover {
+    background-color: var(--background-secondary, #f3f4f6);
+    color: var(--text-primary, #1f2937);
+  }
+
+  .notification-badge {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    background-color: #ef4444;
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 10px;
+    min-width: 18px;
+    text-align: center;
+  }
+
+  .dashboard-content {
+    padding: 32px;
+  }
+
+  /* Dashboard Grid */
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 24px;
+    margin-bottom: 32px;
+  }
+
+  .dashboard-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--border-color, #e5e7eb);
+    overflow: hidden;
+    transition: all 0.2s ease;
+  }
+
+  .dashboard-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+  }
+
+  .dashboard-card .card-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border-color, #e5e7eb);
+    background: linear-gradient(135deg, var(--primary-blue, #4f46e5) 0%, var(--primary-blue-dark, #3730a3) 100%);
+    color: white;
+  }
+
+  .card-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .card-title i {
+    font-size: 1.25rem;
+  }
+
+  .card-title h3 {
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 600;
+  }
+
+  .dashboard-card .card-body {
+    padding: 24px;
+  }
+
+  /* Progress Section */
+  .progress-section {
+    margin-bottom: 20px;
+  }
+
+  .progress-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .progress-percentage {
+    font-weight: 600;
+    color: var(--text-primary, #1f2937);
+  }
+
+  .progress-fraction {
+    font-size: 0.875rem;
+    color: var(--text-secondary, #6b7280);
+  }
+
+  .progress-bar {
+    width: 100%;
+    height: 8px;
+    background-color: var(--background-secondary, #f3f4f6);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-blue, #4f46e5) 0%, var(--secondary-gold, #f59e0b) 100%);
+    transition: width 0.3s ease;
+  }
+
+  /* Card Actions */
+  .card-actions {
+    margin-bottom: 16px;
+  }
+
+  .card-actions .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+
+  .card-description {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--text-secondary, #6b7280);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .card-description.success {
+    color: var(--success-color, #10b981);
+  }
+
+  .card-description i {
+    font-size: 1rem;
+  }
+
+  /* Profile Details */
+  .profile-details {
+    margin-bottom: 20px;
+  }
+
+  .detail-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border-color, #e5e7eb);
+  }
+
+  .detail-item:last-child {
+    border-bottom: none;
+  }
+
+  .detail-label {
+    color: var(--text-secondary, #6b7280);
+    font-weight: 500;
+  }
+
+  .detail-value {
+    font-weight: 600;
+    color: var(--text-primary, #1f2937);
+  }
+
+  /* Quick Actions */
+  .quick-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .action-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+  }
+
+  .action-btn.primary {
+    background-color: var(--primary-blue, #4f46e5);
+    color: white;
+  }
+
+  .action-btn.primary:hover {
+    background-color: var(--primary-blue-dark, #3730a3);
+    color: white;
+    transform: translateY(-1px);
+  }
+
+  .action-btn.secondary {
+    background-color: var(--background-secondary, #f3f4f6);
+    color: var(--text-primary, #1f2937);
+    border-color: var(--border-color, #e5e7eb);
+  }
+
+  .action-btn.secondary:hover {
+    background-color: var(--background-color, #f8fafc);
+    color: var(--text-primary, #1f2937);
+    border-color: var(--primary-blue, #4f46e5);
+    transform: translateY(-1px);
+  }
+
+  .action-btn.admin {
+    background-color: var(--secondary-gold, #f59e0b);
+    color: white;
+  }
+
+  .action-btn.admin:hover {
+    background-color: var(--secondary-gold-light, #fbbf24);
+    color: white;
+    transform: translateY(-1px);
+  }
+
+  .action-btn i {
+    font-size: 1.125rem;
+  }
+
+  /* Responsive Design */
+  @media (max-width: 1024px) {
+    .dashboard-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .sidebar {
+      transform: translateX(-100%);
+    }
+
+    .sidebar.active {
+      transform: translateX(0);
+    }
+
+    .main-content {
+      margin-left: 0;
+    }
+
+    .sidebar-toggle {
+      display: block;
+    }
+
+    .content-header {
+      padding: 16px 20px;
+    }
+
+    .content-header h1 {
+      font-size: 1.5rem;
+    }
+
+    .dashboard-content {
+      padding: 20px;
+    }
+
+    .dashboard-grid {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    .dashboard-card .card-body {
+      padding: 20px;
+    }
+
+    .quick-actions {
+      gap: 8px;
+    }
+
+    .action-btn {
+      padding: 12px 14px;
+    }
+  }
+
+  /* Personalized Content Styles */
+  .personalized-section {
+    margin-bottom: 40px;
+  }
+
+  .personalized-section .section-header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .personalized-section .section-header h2 {
+    margin: 0 0 8px 0;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .personalized-section .section-header p {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 1.125rem;
+  }
+
+  .personalized-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 24px;
+    margin-bottom: 32px;
+  }
+
+  /* Lifestyle Card */
+  .lifestyle-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+  }
+
+  .lifestyle-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .lifestyle-header i {
+    font-size: 1.5rem;
+    color: var(--secondary-gold);
+  }
+
+  .lifestyle-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+
+  .lifestyle-content p {
+    margin: 0 0 16px 0;
+    font-size: 1.125rem;
+    opacity: 0.9;
+  }
+
+  .lifestyle-suggestions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .suggestion-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    backdrop-filter: blur(10px);
+  }
+
+  .suggestion-item i {
+    color: var(--secondary-gold);
+  }
+
+  .lifestyle-cta {
+    display: inline-block;
+    padding: 12px 24px;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+
+  .lifestyle-cta:hover {
+    background: rgba(255, 255, 255, 0.3);
+    color: white;
+    transform: translateY(-2px);
+  }
+
+  /* Age Insights Card */
+  .age-insights-card {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 8px 32px rgba(240, 147, 251, 0.3);
+  }
+
+  .age-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .age-header i {
+    font-size: 1.5rem;
+    color: var(--secondary-gold);
+  }
+
+  .age-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+
+  .age-content p {
+    margin: 0 0 16px 0;
+    font-size: 1.125rem;
+    opacity: 0.9;
+  }
+
+  .age-benefits {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .age-benefits li {
+    padding: 8px 0;
+    position: relative;
+    padding-left: 24px;
+  }
+
+  .age-benefits li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: var(--secondary-gold);
+    font-weight: bold;
+  }
+
+  /* Occupation Card */
+  .occupation-card {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 8px 32px rgba(79, 172, 254, 0.3);
+  }
+
+  .occupation-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .occupation-header i {
+    font-size: 1.5rem;
+    color: var(--secondary-gold);
+  }
+
+  .occupation-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+
+  .occupation-content p {
+    margin: 0 0 16px 0;
+    font-size: 1.125rem;
+    opacity: 0.9;
+  }
+
+  .occupation-features {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .feature-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .feature-item i {
+    color: var(--secondary-gold);
+  }
+
+  .occupation-btn {
+    padding: 12px 24px;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .occupation-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+  }
+
+  /* Insights Section */
+  .insights-section {
+    margin-bottom: 40px;
+  }
+
+  .insights-section .section-header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .insights-section .section-header h2 {
+    margin: 0 0 8px 0;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .insights-section .section-header p {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 1.125rem;
+  }
+
+  .insights-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 24px;
+  }
+
+  .insight-card {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+  }
+
+  .insight-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+  }
+
+  .insight-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .insight-header i {
+    font-size: 1.5rem;
+    color: var(--primary-blue);
+  }
+
+  .insight-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  /* Risk Assessment Card */
+  .risk-card .risk-level {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    background: var(--background-secondary);
+  }
+
+  .risk-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+  }
+
+  .risk-level.low .risk-indicator {
+    background: #10b981;
+  }
+
+  .risk-level.medium .risk-indicator {
+    background: #f59e0b;
+  }
+
+  .risk-level.high .risk-indicator {
+    background: #ef4444;
+  }
+
+  .risk-text {
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .risk-recommendations p {
+    margin: 0 0 12px 0;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .risk-recommendations ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .risk-recommendations li {
+    padding: 6px 0;
+    position: relative;
+    padding-left: 20px;
+    color: var(--text-secondary);
+  }
+
+  .risk-recommendations li::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: var(--primary-blue);
+    font-weight: bold;
+  }
+
+  /* Financial Health Card */
+  .financial-score {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .score-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    flex-shrink: 0;
+  }
+
+  .score-number {
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .score-label {
+    font-size: 0.75rem;
+    opacity: 0.9;
+  }
+
+  .score-details {
+    flex: 1;
+  }
+
+  .score-details p {
+    margin: 0 0 12px 0;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .financial-tips .tip {
+    display: block;
+    padding: 8px 12px;
+    background: var(--background-secondary);
+    border-radius: 6px;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+  }
+
+  .financial-prompt {
+    text-align: center;
+    padding: 20px;
+  }
+
+  .financial-prompt i {
+    font-size: 2rem;
+    color: var(--primary-blue);
+    margin-bottom: 12px;
+  }
+
+  .financial-prompt p {
+    margin: 0 0 16px 0;
+    color: var(--text-secondary);
+  }
+
+  /* Trends Card */
+  .trend-items {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .trend-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    transition: all 0.2s ease;
+  }
+
+  .trend-item:hover {
+    background: var(--background-secondary);
+  }
+
+  .trend-item i {
+    font-size: 1.25rem;
+    color: var(--primary-blue);
+  }
+
+  .trend-item h4 {
+    margin: 0 0 4px 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .trend-item p {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+  }
+
+  .trend-badge {
+    margin-left: auto;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .trend-item.hot .trend-badge {
+    background: #ef4444;
+    color: white;
+  }
+
+  .trend-item.trending .trend-badge {
+    background: #f59e0b;
+    color: white;
+  }
+
+  .trend-item.new .trend-badge {
+    background: #10b981;
+    color: white;
+  }
+
+  .trends-btn, .seasonal-btn {
+    width: 100%;
+    padding: 12px 24px;
+    background: var(--primary-blue);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .trends-btn:hover, .seasonal-btn:hover {
+    background: var(--primary-blue-dark);
+    transform: translateY(-2px);
+  }
+
+  /* Insurance Hub Card */
+  .insurance-hub-card .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .hub-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .status-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #10b981;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+  }
+
+  .insurance-overview {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .coverage-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .coverage-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    background: var(--background-secondary);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+
+  .coverage-item:hover {
+    background: white;
+    border-color: var(--primary-blue);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15);
+  }
+
+  .coverage-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+  }
+
+  .coverage-icon.health {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+  }
+
+  .coverage-icon.life {
+    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+  }
+
+  .coverage-icon.property {
+    background: linear-gradient(135deg, #10b981, #059669);
+  }
+
+  .coverage-details {
+    flex: 1;
+  }
+
+  .coverage-details h4 {
+    margin: 0 0 4px 0;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .coverage-status {
+    margin: 0 0 8px 0;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+  }
+
+  .coverage-action {
+    display: inline-block;
+    padding: 4px 12px;
+    background: var(--primary-blue);
+    color: white;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .coverage-action:hover {
+    background: var(--primary-blue-dark);
+    transform: scale(1.05);
+  }
+
+  .hub-quick-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+  }
+
+  .hub-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 12px;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+
+  .hub-btn i {
+    font-size: 1.25rem;
+  }
+
+  .hub-btn span {
+    font-size: 0.875rem;
+  }
+
+  .hub-btn.primary {
+    background: var(--primary-blue);
+    color: white;
+  }
+
+  .hub-btn.primary:hover {
+    background: var(--primary-blue-dark);
+    transform: translateY(-2px);
+  }
+
+  .hub-btn.secondary {
+    background: var(--background-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+  }
+
+  .hub-btn.secondary:hover {
+    background: white;
+    border-color: var(--primary-blue);
+    color: var(--primary-blue);
+    transform: translateY(-2px);
+  }
+
+  /* Modal Content Styles */
+  .coverage-modal, .calculator-modal, .consultation-modal {
+    padding: 20px 0;
+  }
+
+  .coverage-modal h4, .calculator-modal h4, .consultation-modal h4 {
+    margin: 0 0 20px 0;
+    color: var(--text-primary);
+    text-align: center;
+  }
+
+  .plan-options {
+    display: grid;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .plan-option {
+    padding: 20px;
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+  }
+
+  .plan-option:hover {
+    border-color: var(--primary-blue);
+    background: var(--background-secondary);
+  }
+
+  .plan-option.featured {
+    border-color: var(--primary-blue);
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.05), rgba(79, 70, 229, 0.02));
+    position: relative;
+  }
+
+  .plan-option.featured::before {
+    content: 'RECOMMENDED';
+    position: absolute;
+    top: -10px;
+    right: 20px;
+    background: var(--primary-blue);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .plan-option h5 {
+    margin: 0 0 8px 0;
+    color: var(--text-primary);
+    font-size: 1.125rem;
+  }
+
+  .plan-option p {
+    margin: 0 0 16px 0;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+  }
+
+  .plan-features {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+
+  .plan-features span {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+  }
+
+  .plan-price {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--primary-blue);
+  }
+
+  .calculator-form, .consultation-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .form-group label {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.875rem;
+  }
+
+  .form-input {
+    padding: 12px 16px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 0.875rem;
+    transition: border-color 0.3s ease;
+  }
+
+  .form-input:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+  }
+
+  .coverage-result {
+    background: var(--background-secondary);
+    padding: 16px;
+    border-radius: 8px;
+    margin-top: 16px;
+  }
+
+  .result-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .result-item:last-child {
+    border-bottom: none;
+  }
+
+  .result-label {
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .result-value {
+    font-weight: 700;
+    color: var(--primary-blue);
+  }
+
+  /* Responsive adjustments for Insurance Hub */
+  @media (max-width: 768px) {
+    .hub-quick-actions {
+      grid-template-columns: 1fr;
+    }
+
+    .coverage-summary {
+      gap: 12px;
+    }
+
+    .coverage-item {
+      padding: 12px;
+    }
+
+    .coverage-icon {
+      width: 40px;
+      height: 40px;
+      font-size: 1rem;
+    }
+
+    .plan-options {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .content-header {
+      padding: 12px 16px;
+    }
+
+    .dashboard-content {
+      padding: 16px;
+    }
+
+    .dashboard-card .card-header {
+      padding: 16px 20px;
+    }
+
+    .dashboard-card .card-body {
+      padding: 16px;
+    }
+
+    .sidebar {
+      width: 100%;
+    }
+
+    .user-info h4 {
+      font-size: 1rem;
+    }
+
+    .menu-item {
+      padding: 14px 16px;
+    }
+  }
+
+  .dashboard-search-input {
+    width: 100%;
+    padding: 8px 35px 8px 30px;
+    border: 2px solid var(--border-color);
+    border-radius: 20px;
+    font-size: 0.875rem;
+    background: var(--background-color);
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  }
+
+  .dashboard-search-input:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1), 0 4px 10px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+  }
+
+  .dashboard-search-icon {
+    position: absolute;
+    left: 10px;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    z-index: 2;
+  }
+
+  .dashboard-clear-btn {
+    position: absolute;
+    right: 10px;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+  }
+
+  .dashboard-clear-btn:hover {
+    background: var(--background-secondary);
+    color: var(--text-primary);
+  }
+
+  /* Search highlighting */
+  .search-highlight-row {
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.05), rgba(79, 70, 229, 0.02));
+    border-left: 3px solid var(--primary-blue);
+  }
+
+  .hidden-row {
+    display: none !important;
+  }
+
+  /* Chat Message Styles */
+  .chat-message-wrapper {
+    margin-bottom: 16px;
+    display: flex;
+  }
+
+  .user-message-wrapper {
+    justify-content: flex-end;
+  }
+
+  .admin-message-wrapper {
+    justify-content: flex-start;
+  }
+
+  .chat-message {
+    max-width: 70%;
+    padding: 12px 16px;
+    border-radius: 12px;
+  }
+
+  .user-message {
+    background-color: var(--primary-blue);
+    color: white;
+  }
+
+  .admin-message {
+    background-color: var(--background-color);
+    border: 1px solid var(--border-color);
+  }
+
+  .message-timestamp {
+    font-size: 0.75rem;
+    opacity: 0.7;
+    margin-top: 4px;
+  }
+
+  @media (max-width: 768px) {
+    .dashboard-header {
+      padding: 30px 0;
+    }
+
+    .dashboard-header-content {
+      flex-direction: column;
+      gap: 24px;
+      text-align: center;
+    }
+
+    .dashboard-brand {
+      order: 1;
+    }
+
+    .dashboard-title {
+      order: 2;
+    }
+
+    .dashboard-nav {
+      order: 3;
+    }
+
+    .brand-logo {
+      height: 60px;
+      width: 60px;
+      border-radius: 12px;
+      border-width: 3px;
+      padding: 3px;
+    }
+
+    .dashboard-title h1 {
+      font-size: 2rem;
+    }
+
+    .dashboard-nav {
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .dashboard-nav-link {
+      padding: 10px 16px;
+      font-size: 0.875rem;
+    }
+
+    .page-container > div:first-of-type {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    .card-body table {
+      font-size: 0.875rem;
+    }
+
+    .card-body table th,
+    .card-body table td {
+      padding: 8px 0;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .dashboard-nav {
+      grid-template-columns: repeat(2, 1fr);
+      display: grid;
+      gap: 8px;
+      width: 100%;
+    }
+
+    .dashboard-nav-link {
+      justify-content: center;
+    }
+  }
+</style>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // Function to scroll to specific sections
+  function scrollToSection(sectionId) {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+
+      // Add a highlight effect
+      element.style.transition = 'all 0.3s ease';
+      element.style.transform = 'scale(1.02)';
+      element.style.boxShadow = '0 8px 25px rgba(79, 70, 229, 0.15)';
+
+      setTimeout(() => {
+        element.style.transform = 'scale(1)';
+        element.style.boxShadow = '';
+      }, 300);
+    }
+  }
+
+  function sendMessage() {
+    const input = document.getElementById('chat-input');
+    const message = input.value.trim();
+    if (message) {
+      fetch('/send_message', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message: message })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          location.reload();
+        }
+      });
+      input.value = '';
+    }
+  }
+
+  document.getElementById('chat-input').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      sendMessage();
+    }
+  });
+
+  // Auto-scroll chat to bottom
+  const chatMessages = document.getElementById('chat-messages');
+  if (chatMessages) {
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  // Dashboard Search Functionality
+  function initializeDashboardSearch() {
+    const purchaseSearch = document.getElementById('purchaseHistorySearch');
+    const clearPurchaseSearch = document.getElementById('clearPurchaseHistorySearch');
+    const purchaseRows = document.querySelectorAll('table tbody tr');
+
+    if (purchaseSearch && purchaseRows.length > 0) {
+      purchaseSearch.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase().trim();
+        clearPurchaseSearch.style.display = searchTerm ? 'block' : 'none';
+
+        let visibleCount = 0;
+
+        purchaseRows.forEach(row => {
+          const cells = row.querySelectorAll('td');
+          let rowText = '';
+          cells.forEach(cell => rowText += cell.textContent.toLowerCase() + ' ');
+
+          if (searchTerm === '' || rowText.includes(searchTerm)) {
+            row.classList.remove('hidden-row');
+            row.classList.add('search-highlight-row');
+            visibleCount++;
+
+            // Remove highlight after animation
+            setTimeout(() => {
+              row.classList.remove('search-highlight-row');
+            }, 1000);
+          } else {
+            row.classList.add('hidden-row');
+          }
+        });
+
+        // Show no results message if needed
+        updatePurchaseSearchResults(visibleCount, searchTerm);
+      });
+
+      clearPurchaseSearch.addEventListener('click', function() {
+        purchaseSearch.value = '';
+        purchaseSearch.dispatchEvent(new Event('input'));
+      });
+    }
+  }
+
+  function updatePurchaseSearchResults(count, searchTerm) {
+    // Remove existing no results message
+    const existingMessage = document.querySelector('.no-purchase-results');
+    if (existingMessage) {
+      existingMessage.remove();
+    }
+
+    if (count === 0 && searchTerm) {
+      const tableContainer = document.querySelector('table').parentElement;
+      const noResultsMessage = document.createElement('div');
+      noResultsMessage.className = 'no-purchase-results';
+      noResultsMessage.style.cssText = `
+        text-align: center;
+        padding: 40px 20px;
+        color: var(--text-secondary);
+        background: var(--background-secondary);
+        border-radius: 8px;
+        margin-top: 20px;
+      `;
+      noResultsMessage.innerHTML = `
+        <h4 style="color: var(--text-primary); margin-bottom: 10px;">🔍 No purchases found</h4>
+        <p>No purchases match "${searchTerm}". Try a different search term.</p>
+      `;
+      tableContainer.appendChild(noResultsMessage);
+    }
+  }
+
+  // Initialize dashboard search when DOM is loaded
+  document.addEventListener('DOMContentLoaded', initializeDashboardSearch);
+
+  // Sidebar toggle functionality
+  document.addEventListener('DOMContentLoaded', function() {
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebar = document.querySelector('.sidebar');
+
+    if (sidebarToggle && sidebar) {
+      sidebarToggle.addEventListener('click', function() {
+        sidebar.classList.toggle('active');
+      });
+
+      // Close sidebar when clicking outside on mobile
+      document.addEventListener('click', function(e) {
+        if (window.innerWidth <= 768) {
+          if (!sidebar.contains(e.target) && !sidebarToggle.contains(e.target)) {
+            sidebar.classList.remove('active');
+          }
+        }
+      });
+
+      // Handle window resize
+      window.addEventListener('resize', function() {
+        if (window.innerWidth > 768) {
+          sidebar.classList.remove('active');
+        }
+      });
+    }
+  });
+
+  // Personalized Content Functions
+  function showOccupationPlans() {
+    alert('Professional plans feature coming soon! This will show tailored insurance plans for your profession.');
+  }
+
+  function showSeasonalOffers() {
+    alert('Seasonal offers feature coming soon! This will display current seasonal insurance promotions.');
+  }
+
+  function showTrendingPlans() {
+    alert('Trending plans feature coming soon! This will show the most popular insurance plans.');
+  }
+
+  // ML Interaction Tracking Functions
+  function trackPolicyView(policyId, timeSpent = 1.0) {
+    if (!policyId) return;
+
+    fetch('/ml/track/view', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        policy_id: policyId,
+        time_spent: timeSpent
+      })
+    }).catch(error => console.log('Tracking error:', error));
+  }
+
+  function trackPolicyClick(policyId, clickType = 'general') {
+    if (!policyId) return;
+
+    fetch('/ml/track/click', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        policy_id: policyId,
+        click_type: clickType
+      })
+    }).catch(error => console.log('Tracking error:', error));
+  }
+
+  function trackPolicyRating(policyId, rating) {
+    if (!policyId || !rating) return;
+
+    fetch('/ml/track/rating', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        policy_id: policyId,
+        rating: rating
+      })
+    }).catch(error => console.log('Tracking error:', error));
+  }
+
+  function trackPolicyDismiss(policyId, reason = 'not_interested') {
+    if (!policyId) return;
+
+    fetch('/ml/track/dismiss', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        policy_id: policyId,
+        reason: reason
+      })
+    }).catch(error => console.log('Tracking error:', error));
+  }
+
+  // Auto-track page views and time spent
+  function initializeMLTracking() {
+    // Track time spent on page
+    let startTime = Date.now();
+    let isActive = true;
+
+    // Track when user becomes inactive
+    document.addEventListener('visibilitychange', function() {
+      if (document.hidden) {
+        isActive = false;
+      } else {
+        isActive = true;
+        startTime = Date.now();
+      }
+    });
+
+    // Track page unload
+    window.addEventListener('beforeunload', function() {
+      if (isActive) {
+        let timeSpent = (Date.now() - startTime) / 1000;
+        // Track time spent on dashboard
+        navigator.sendBeacon('/ml/track/view', JSON.stringify({
+          policy_id: 0, // Dashboard view
+          time_spent: Math.min(timeSpent, 300) // Cap at 5 minutes
+        }));
+      }
+    });
+  }
+
+  // Initialize ML tracking when page loads
+  document.addEventListener('DOMContentLoaded', function() {
+    initializeMLTracking();
+
+    // Check if FontAwesome icons are loaded, if not add fallback
+    setTimeout(function() {
+      const icons = document.querySelectorAll('.sidebar .menu-item i');
+      icons.forEach(function(icon) {
+        if (window.getComputedStyle(icon, ':before').content === 'none' ||
+            window.getComputedStyle(icon, ':before').content === '""') {
+          // FontAwesome not loaded, add text fallback
+          if (icon.classList.contains('fa-tachometer-alt')) icon.textContent = '📊';
+          else if (icon.classList.contains('fa-user-cog')) icon.textContent = '👤';
+          else if (icon.classList.contains('fa-robot')) icon.textContent = '🤖';
+          else if (icon.classList.contains('fa-umbrella')) icon.textContent = '☂️';
+          else if (icon.classList.contains('fa-comment-dots')) icon.textContent = '💬';
+          else if (icon.classList.contains('fa-shopping-bag')) icon.textContent = '🛍️';
+          else if (icon.classList.contains('fa-file-invoice-dollar')) icon.textContent = '📄';
+          else if (icon.classList.contains('fa-credit-card')) icon.textContent = '💳';
+          else if (icon.classList.contains('fa-tools')) icon.textContent = '🔧';
+        }
+      });
+    }, 1000);
+  });
+
+  // Insurance Hub Functions
+  function exploreHealthCoverage() {
+    showModal('Health Coverage Options', `
+      <div class="coverage-modal">
+        <h4>🏥 Health Insurance Plans</h4>
+        <div class="plan-options">
+          <div class="plan-option">
+            <h5>Basic Health Plan</h5>
+            <p>Essential medical coverage for individuals</p>
+            <div class="plan-features">
+              <span>✓ Doctor visits</span>
+              <span>✓ Emergency care</span>
+              <span>✓ Prescription drugs</span>
+            </div>
+            <div class="plan-price">From $45/month</div>
+          </div>
+          <div class="plan-option featured">
+            <h5>Family Health Plan</h5>
+            <p>Comprehensive coverage for your entire family</p>
+            <div class="plan-features">
+              <span>✓ All basic features</span>
+              <span>✓ Dental & Vision</span>
+              <span>✓ Maternity care</span>
+            </div>
+            <div class="plan-price">From $120/month</div>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="window.location.href='${window.location.origin}/products'">
+          View All Health Plans
+        </button>
+      </div>
+    `);
+  }
+
+  function exploreLifeInsurance() {
+    showModal('Life Insurance Protection', `
+      <div class="coverage-modal">
+        <h4>🛡️ Life Insurance Options</h4>
+        <div class="plan-options">
+          <div class="plan-option">
+            <h5>Term Life Insurance</h5>
+            <p>Affordable protection for a specific period</p>
+            <div class="plan-features">
+              <span>✓ 10, 20, or 30 year terms</span>
+              <span>✓ Fixed premiums</span>
+              <span>✓ Death benefit protection</span>
+            </div>
+            <div class="plan-price">From $25/month</div>
+          </div>
+          <div class="plan-option">
+            <h5>Whole Life Insurance</h5>
+            <p>Permanent protection with cash value</p>
+            <div class="plan-features">
+              <span>✓ Lifetime coverage</span>
+              <span>✓ Cash value growth</span>
+              <span>✓ Loan options</span>
+            </div>
+            <div class="plan-price">From $85/month</div>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="window.location.href='${window.location.origin}/products'">
+          Get Life Insurance Quote
+        </button>
+      </div>
+    `);
+  }
+
+  function explorePropertyInsurance() {
+    showModal('Property Protection', `
+      <div class="coverage-modal">
+        <h4>🏠 Property Insurance</h4>
+        <div class="plan-options">
+          <div class="plan-option">
+            <h5>Home Insurance</h5>
+            <p>Protect your home and belongings</p>
+            <div class="plan-features">
+              <span>✓ Dwelling protection</span>
+              <span>✓ Personal property</span>
+              <span>✓ Liability coverage</span>
+            </div>
+            <div class="plan-price">From $65/month</div>
+          </div>
+          <div class="plan-option">
+            <h5>Renters Insurance</h5>
+            <p>Coverage for renters and their belongings</p>
+            <div class="plan-features">
+              <span>✓ Personal property</span>
+              <span>✓ Liability protection</span>
+              <span>✓ Additional living expenses</span>
+            </div>
+            <div class="plan-price">From $15/month</div>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="window.location.href='${window.location.origin}/products'">
+          Get Property Quote
+        </button>
+      </div>
+    `);
+  }
+
+  function showCoverageCalculator() {
+    showModal('Coverage Calculator', `
+      <div class="calculator-modal">
+        <h4>📊 Calculate Your Coverage Needs</h4>
+        <div class="calculator-form">
+          <div class="form-group">
+            <label>Annual Income:</label>
+            <input type="number" id="annual-income" placeholder="Enter your annual income" class="form-input">
+          </div>
+          <div class="form-group">
+            <label>Number of Dependents:</label>
+            <select id="dependents" class="form-input">
+              <option value="0">0</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4+">4+</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Current Debts:</label>
+            <input type="number" id="debts" placeholder="Total debt amount" class="form-input">
+          </div>
+          <button class="btn btn-primary" onclick="calculateCoverage()">
+            Calculate Recommended Coverage
+          </button>
+        </div>
+        <div id="calculator-result" style="display: none;">
+          <h5>Recommended Coverage:</h5>
+          <div class="coverage-result">
+            <div class="result-item">
+              <span class="result-label">Life Insurance:</span>
+              <span class="result-value" id="life-coverage"></span>
+            </div>
+            <div class="result-item">
+              <span class="result-label">Health Insurance:</span>
+              <span class="result-value">Comprehensive plan recommended</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    `);
+  }
+
+  function calculateCoverage() {
+    const income = document.getElementById('annual-income').value;
+    const dependents = document.getElementById('dependents').value;
+    const debts = document.getElementById('debts').value;
+
+    if (income) {
+      const multiplier = dependents === '0' ? 5 : (dependents === '1' ? 7 : 10);
+      const recommendedCoverage = (parseInt(income) * multiplier) + parseInt(debts || 0);
+
+      document.getElementById('life-coverage').textContent = `$${recommendedCoverage.toLocaleString()}`;
+      document.getElementById('calculator-result').style.display = 'block';
+    } else {
+      alert('Please enter your annual income to calculate coverage.');
+    }
+  }
+
+  function downloadInsuranceCard() {
+    alert('Digital insurance card download feature coming soon! This will generate a downloadable insurance card.');
+  }
+
+  function scheduleConsultation() {
+    showModal('Schedule Consultation', `
+      <div class="consultation-modal">
+        <h4>📅 Book Your Free Consultation</h4>
+        <p>Get personalized advice from our insurance experts</p>
+        <div class="consultation-form">
+          <div class="form-group">
+            <label>Preferred Date:</label>
+            <input type="date" class="form-input" min="${new Date().toISOString().split('T')[0]}">
+          </div>
+          <div class="form-group">
+            <label>Preferred Time:</label>
+            <select class="form-input">
+              <option>9:00 AM - 10:00 AM</option>
+              <option>10:00 AM - 11:00 AM</option>
+              <option>11:00 AM - 12:00 PM</option>
+              <option>2:00 PM - 3:00 PM</option>
+              <option>3:00 PM - 4:00 PM</option>
+              <option>4:00 PM - 5:00 PM</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Consultation Type:</label>
+            <select class="form-input">
+              <option>General Insurance Review</option>
+              <option>Life Insurance Planning</option>
+              <option>Health Insurance Options</option>
+              <option>Property Insurance</option>
+              <option>Business Insurance</option>
+            </select>
+          </div>
+          <button class="btn btn-primary">
+            Book Consultation
+          </button>
+        </div>
+      </div>
+    `);
+  }
+</script>
+{% endblock %}

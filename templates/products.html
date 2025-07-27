@@ -1,0 +1,1401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InsureMyWay Products</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --background-color: #f9fafb;
+            --text-color: #2d3748;
+            --navbar-bg: #4f46e5;
+            --navbar-text: #ffffff;
+            --box-bg: #ffffff;
+            --box-border: #e5e7eb;
+            --box-shadow: rgba(0, 0, 0, 0.05);
+            --btn-bg: #4f46e5;
+            --btn-hover-bg: #4338ca;
+        }
+
+        [data-theme="dark"] {
+            --background-color: #1f2937;
+            --text-color: #d1d5db;
+            --navbar-bg: #1e40af;
+            --navbar-text: #d1d5db;
+            --box-bg: #374151;
+            --box-border: #4b5563;
+            --box-shadow: rgba(255, 255, 255, 0.05);
+            --btn-bg: #1e40af;
+            --btn-hover-bg: #1e3a8a;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            transition: all 0.3s ease;
+            min-height: 100vh;
+        }
+
+        /* Professional Products Header */
+        .products-header-bar {
+            background: linear-gradient(135deg, var(--navbar-bg) 0%, #1e40af 100%);
+            padding: 25px 30px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .products-header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .brand-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .header-logo {
+            height: 65px;
+            width: 65px;
+            border-radius: 15px;
+            object-fit: cover;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            box-shadow:
+                0 4px 12px rgba(0, 0, 0, 0.2),
+                0 0 0 1px rgba(255, 255, 255, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            padding: 3px;
+            transition: all 0.3s ease;
+        }
+
+        .header-logo:hover {
+            transform: rotate(2deg) scale(1.05);
+            box-shadow:
+                0 6px 20px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(255, 255, 255, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4);
+        }
+
+        .brand-info {
+            color: white;
+        }
+
+        .brand-title {
+            font-size: 1.875rem;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: -0.025em;
+        }
+
+        .brand-subtitle {
+            font-size: 0.95rem;
+            margin: 0;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+
+        .products-stats {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 12px 20px;
+            border-radius: 25px;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-item {
+            text-align: center;
+            color: white;
+        }
+
+        .stat-number {
+            font-size: 1.25rem;
+            font-weight: 700;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            opacity: 0.9;
+        }
+
+        /* Professional Products Container */
+        .products-main {
+            padding: 40px 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+            min-height: calc(100vh - 200px);
+        }
+
+        .products-title {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .products-title h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0 0 10px 0;
+            background: linear-gradient(135deg, var(--navbar-bg), #1e40af);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .products-title p {
+            font-size: 1.125rem;
+            color: #6b7280;
+            margin: 0;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        /* Enhanced Product Cards */
+        .product-box {
+            background: var(--box-bg);
+            border: 1px solid var(--box-border);
+            border-radius: 16px;
+            padding: 30px 25px;
+            box-shadow:
+                0 10px 30px rgba(0, 0, 0, 0.08),
+                0 4px 15px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, var(--navbar-bg), #1e40af);
+        }
+
+        .product-box:hover {
+            transform: translateY(-8px);
+            box-shadow:
+                0 20px 40px rgba(0, 0, 0, 0.12),
+                0 8px 25px rgba(0, 0, 0, 0.08);
+            border-color: var(--navbar-bg);
+        }
+
+        .product-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--navbar-bg), #1e40af);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .product-box h3 {
+            font-size: 1.375rem;
+            font-weight: 700;
+            margin: 0 0 15px 0;
+            color: var(--text-color);
+        }
+
+        .product-description {
+            font-size: 0.95rem;
+            color: #6b7280;
+            margin: 0 0 20px 0;
+            line-height: 1.6;
+        }
+
+        .product-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--navbar-bg);
+            margin: 0 0 25px 0;
+        }
+
+        .product-price .currency {
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+
+        /* Enhanced Button Styling */
+        .btn {
+            display: inline-block;
+            padding: 14px 28px;
+            background: linear-gradient(135deg, var(--btn-bg), var(--btn-hover-bg));
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(79, 70, 229, 0.4);
+            color: white;
+            text-decoration: none;
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        /* Enhanced Purchased Products Section */
+        .purchased-products {
+            margin: 60px auto 40px;
+            max-width: 1200px;
+            padding: 40px 30px;
+            background: var(--box-bg);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--box-border);
+        }
+
+        .purchased-products h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            text-align: center;
+            margin: 0 0 40px 0;
+            background: linear-gradient(135deg, var(--navbar-bg), #1e40af);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .download-section {
+            text-align: center;
+            margin-top: 50px;
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            flex-wrap: wrap;
+        }
+
+        .download-btn {
+            background: linear-gradient(135deg, #10b981, #059669);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .download-btn:hover {
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .products-header-bar {
+                padding: 20px 25px;
+            }
+
+            .products-header-content {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .brand-section {
+                justify-content: center;
+                gap: 15px;
+            }
+
+            .header-logo {
+                height: 55px;
+                width: 55px;
+                border-radius: 12px;
+                border-width: 2px;
+                padding: 2px;
+            }
+
+            .brand-title {
+                font-size: 1.5rem;
+            }
+
+            .brand-subtitle {
+                font-size: 0.875rem;
+            }
+
+            .products-stats {
+                gap: 15px;
+                padding: 10px 16px;
+            }
+
+            .products-main {
+                padding: 30px 20px;
+            }
+
+            .products-title h1 {
+                font-size: 2rem;
+            }
+
+            .products-title p {
+                font-size: 1rem;
+            }
+
+            .container {
+                grid-template-columns: 1fr;
+                gap: 25px;
+            }
+
+            .product-box {
+                padding: 25px 20px;
+            }
+
+            .purchased-products {
+                margin: 40px auto 30px;
+                padding: 30px 20px;
+            }
+
+            .purchased-products h2 {
+                font-size: 1.75rem;
+            }
+
+            .download-section {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .products-header-bar {
+                padding: 15px 20px;
+            }
+
+            .brand-section {
+                gap: 12px;
+            }
+
+            .header-logo {
+                height: 50px;
+                width: 50px;
+                border-radius: 10px;
+                border-width: 2px;
+                padding: 2px;
+            }
+
+            .brand-title {
+                font-size: 1.25rem;
+            }
+
+            .brand-subtitle {
+                font-size: 0.8rem;
+            }
+
+            .products-stats {
+                gap: 10px;
+                padding: 8px 12px;
+            }
+
+            .stat-number {
+                font-size: 1rem;
+            }
+
+            .stat-label {
+                font-size: 0.7rem;
+            }
+
+            .products-main {
+                padding: 25px 15px;
+            }
+
+            .products-title h1 {
+                font-size: 1.75rem;
+            }
+
+            .products-title p {
+                font-size: 0.95rem;
+            }
+
+            .container {
+                gap: 20px;
+            }
+
+            .product-box {
+                padding: 20px 15px;
+            }
+
+            .product-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 1.25rem;
+            }
+
+            .product-box h3 {
+                font-size: 1.25rem;
+            }
+
+            .product-description {
+                font-size: 0.875rem;
+            }
+
+            .product-price {
+                font-size: 1.25rem;
+            }
+
+            .btn {
+                padding: 12px 20px;
+                font-size: 0.875rem;
+            }
+
+            .purchased-products {
+                margin: 30px auto 20px;
+                padding: 25px 15px;
+            }
+
+            .purchased-products h2 {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Modern Footer Styles */
+        .modern-footer {
+            background: linear-gradient(135deg, #1e40af 0%, #4f46e5 100%);
+            color: white;
+            margin-top: 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .modern-footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer-main {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1.5fr;
+            gap: 40px;
+            padding: 60px 0 40px;
+        }
+
+        .footer-section {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .footer-brand {
+            padding-right: 20px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .footer-logo img {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            object-fit: cover;
+        }
+
+        .footer-brand-text {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: white;
+        }
+
+        .footer-description {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+            margin-bottom: 25px;
+            font-size: 0.95rem;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 12px;
+        }
+
+        .social-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .social-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .social-icon {
+            font-size: 1.2rem;
+        }
+
+        .footer-title {
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .footer-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 30px;
+            height: 2px;
+            background: #f59e0b;
+            border-radius: 1px;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .footer-links a:hover {
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .footer-contact {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .contact-icon {
+            font-size: 1.1rem;
+            margin-top: 2px;
+        }
+
+        .contact-details {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .contact-label {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .contact-details a,
+        .contact-details span {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .contact-details a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 25px 0;
+        }
+
+        .footer-bottom-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .footer-copyright p {
+            color: rgba(255, 255, 255, 0.7);
+            margin: 0;
+            font-size: 0.9rem;
+        }
+
+        .footer-legal {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .footer-legal a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-legal a:hover {
+            color: white;
+        }
+
+        /* Responsive Footer */
+        @media (max-width: 1024px) {
+            .footer-main {
+                grid-template-columns: 2fr 1fr 1fr;
+                gap: 30px;
+            }
+
+            .footer-section:nth-child(4),
+            .footer-section:nth-child(5) {
+                grid-column: span 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .footer-main {
+                grid-template-columns: 1fr;
+                gap: 40px;
+                padding: 40px 0 30px;
+            }
+
+            .footer-brand {
+                padding-right: 0;
+                text-align: center;
+            }
+
+            .footer-social {
+                justify-content: center;
+            }
+
+            .footer-bottom-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+
+            .footer-legal {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .footer-container {
+                padding: 0 15px;
+            }
+
+            .footer-main {
+                padding: 30px 0 20px;
+                gap: 30px;
+            }
+
+            .footer-legal {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+
+        /* Search and Filter Styles */
+        .search-filter-section {
+            background: linear-gradient(135deg, var(--background-secondary) 0%, var(--background-color) 100%);
+            padding: 30px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .search-filter-content {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .search-bar-container {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .search-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 14px 50px 14px 45px;
+            border: 2px solid var(--border-color);
+            border-radius: 25px;
+            font-size: 1rem;
+            background: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--navbar-bg);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1), 0 4px 15px rgba(0, 0, 0, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            z-index: 2;
+        }
+
+        .clear-search-btn {
+            position: absolute;
+            right: 15px;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+        }
+
+        .clear-search-btn:hover {
+            background: var(--background-secondary);
+            color: var(--text-primary);
+        }
+
+        .filter-options {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .filter-select {
+            padding: 12px 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            background: white;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 150px;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--navbar-bg);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .search-results-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        #searchQuery {
+            font-weight: 600;
+            color: var(--navbar-bg);
+        }
+
+        /* Product filtering states */
+        .product-box.hidden {
+            display: none !important;
+        }
+
+        .product-box.highlighted {
+            border: 2px solid var(--navbar-bg);
+            box-shadow: 0 8px 25px rgba(79, 70, 229, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .no-results-message {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+            background: var(--background-secondary);
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        .no-results-message h3 {
+            color: var(--text-primary);
+            margin-bottom: 10px;
+        }
+
+        /* Responsive search */
+        @media (max-width: 768px) {
+            .search-filter-content {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-bar-container {
+                min-width: auto;
+            }
+
+            .filter-options {
+                justify-content: center;
+            }
+
+            .search-results-info {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Professional Products Header -->
+    <div class="products-header-bar">
+        <div class="products-header-content">
+            <div class="brand-section">
+                <img src="{{ url_for('static', filename='images/logo_insuremyway.jpg') }}" alt="InsureMyWay Logo" class="header-logo">
+                <div class="brand-info">
+                    <h1 class="brand-title">InsureMyWay</h1>
+                    <p class="brand-subtitle">Insurance Products Marketplace</p>
+                </div>
+            </div>
+            <div class="products-stats">
+                <div class="stat-item">
+                    <span class="stat-number">{{ products|length }}</span>
+                    <span class="stat-label">Products</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">{{ purchased_products|length if purchased_products else 0 }}</span>
+                    <span class="stat-label">Purchased</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search and Filter Section -->
+    <div class="search-filter-section">
+        <div class="container">
+            <div class="search-filter-content">
+                <div class="search-bar-container">
+                    <div class="search-input-wrapper">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" id="productSearch" placeholder="Search insurance products..." class="search-input">
+                        <button type="button" id="clearSearch" class="clear-search-btn" style="display: none;">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="filter-options">
+                    <select id="categoryFilter" class="filter-select">
+                        <option value="all">All Categories</option>
+                        <option value="health">Health Insurance</option>
+                        <option value="auto">Auto Insurance</option>
+                        <option value="home">Home Insurance</option>
+                        <option value="life">Life Insurance</option>
+                        <option value="travel">Travel Insurance</option>
+                    </select>
+                    <select id="priceFilter" class="filter-select">
+                        <option value="all">All Prices</option>
+                        <option value="low">Under 50,000 FRW</option>
+                        <option value="medium">50,000 - 100,000 FRW</option>
+                        <option value="high">Over 100,000 FRW</option>
+                    </select>
+                </div>
+            </div>
+            <div class="search-results-info">
+                <span id="searchResultsCount">Showing {{ products|length }} products</span>
+                <span id="searchQuery" style="display: none;"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Professional Products Main Content -->
+    <div class="products-main">
+        <div class="products-title">
+            <h1>Insurance Products</h1>
+            <p>Discover comprehensive insurance solutions tailored to your needs</p>
+        </div>
+
+        <div class="container">
+            {% for product in products %}
+                <div class="product-box">
+                    <div class="product-icon">
+                        {% if 'health' in product.name.lower() or 'medical' in product.name.lower() %}
+                            🏥
+                        {% elif 'auto' in product.name.lower() or 'car' in product.name.lower() or 'vehicle' in product.name.lower() %}
+                            🚗
+                        {% elif 'home' in product.name.lower() or 'property' in product.name.lower() %}
+                            🏠
+                        {% elif 'life' in product.name.lower() %}
+                            👨‍👩‍👧‍👦
+                        {% elif 'travel' in product.name.lower() %}
+                            ✈️
+                        {% else %}
+                            🛡️
+                        {% endif %}
+                    </div>
+                    <h3>{{ product.name }}</h3>
+                    <p class="product-description">{{ product.description }}</p>
+                    <div class="product-price">
+                        <span class="currency">{{ product.price | to_frw }}</span>
+                    </div>
+                    <a href="{{ url_for('purchase', product_id=product.id) }}" class="btn">Purchase Now</a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    {% if current_user.is_authenticated and purchased_products %}
+    <div class="purchased-products">
+        <h2>Your Purchased Products</h2>
+        <div class="container">
+            {% for product in purchased_products %}
+                <div class="product-box">
+                    <div class="product-icon">
+                        {% if 'health' in product.name.lower() or 'medical' in product.name.lower() %}
+                            🏥
+                        {% elif 'auto' in product.name.lower() or 'car' in product.name.lower() or 'vehicle' in product.name.lower() %}
+                            🚗
+                        {% elif 'home' in product.name.lower() or 'property' in product.name.lower() %}
+                            🏠
+                        {% elif 'life' in product.name.lower() %}
+                            👨‍👩‍👧‍👦
+                        {% elif 'travel' in product.name.lower() %}
+                            ✈️
+                        {% else %}
+                            🛡️
+                        {% endif %}
+                    </div>
+                    <h3>{{ product.name }}</h3>
+                    <p class="product-description">{{ product.description }}</p>
+                    <div class="product-price">
+                        <span class="currency">{{ product.price | to_frw }}</span>
+                    </div>
+                    <div style="background: #10b981; color: white; padding: 8px 16px; border-radius: 20px; font-size: 0.875rem; font-weight: 600; margin-top: 15px;">
+                        ✓ Purchased
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="download-section">
+            <a href="{{ url_for('download_form') }}" class="btn download-btn" download="purchased_products_form.pdf">📄 Download Products Form</a>
+            <a href="{{ url_for('download_user_details') }}" class="btn download-btn" download="user_details_form.pdf">📋 Download User Details</a>
+        </div>
+    </div>
+    {% endif %}
+
+    <script>
+        // Initialize theme from localStorage
+        const body = document.body;
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        body.setAttribute('data-theme', savedTheme);
+
+        // Enhanced download buttons functionality
+        const downloadButtons = document.querySelectorAll('.download-section .btn');
+
+        downloadButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                // Visual feedback
+                button.style.transform = 'scale(0.95)';
+                button.style.opacity = '0.8';
+
+                // Reset after animation
+                setTimeout(() => {
+                    button.style.transform = '';
+                    button.style.opacity = '';
+                }, 200);
+
+                // Show download notification
+                showDownloadNotification(button.textContent);
+            });
+        });
+
+        // Product card hover effects
+        const productBoxesForHover = document.querySelectorAll('.product-box');
+
+        productBoxesForHover.forEach(box => {
+            box.addEventListener('mouseenter', () => {
+                box.style.transform = 'translateY(-8px) scale(1.02)';
+            });
+
+            box.addEventListener('mouseleave', () => {
+                box.style.transform = '';
+            });
+        });
+
+        // Download notification function
+        function showDownloadNotification(buttonText) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #10b981;
+                color: white;
+                padding: 12px 20px;
+                border-radius: 8px;
+                font-weight: 600;
+                z-index: 10000;
+                animation: slideIn 0.3s ease;
+            `;
+            notification.textContent = `${buttonText} - Download started!`;
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Add slide-in animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Search and Filter Functionality
+        const searchInput = document.getElementById('productSearch');
+        const clearSearchBtn = document.getElementById('clearSearch');
+        const categoryFilter = document.getElementById('categoryFilter');
+        const priceFilter = document.getElementById('priceFilter');
+        const searchResultsCount = document.getElementById('searchResultsCount');
+        const searchQuery = document.getElementById('searchQuery');
+        const productBoxes = document.querySelectorAll('.product-box');
+        const productsContainer = document.querySelector('.container');
+
+        let allProducts = Array.from(productBoxes);
+        let noResultsMessage = null;
+
+        // Search functionality
+        function performSearch() {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            const selectedCategory = categoryFilter.value;
+            const selectedPriceRange = priceFilter.value;
+
+            let visibleCount = 0;
+            let hasResults = false;
+
+            allProducts.forEach(product => {
+                const productName = product.querySelector('h3').textContent.toLowerCase();
+                const productDescription = product.querySelector('.product-description').textContent.toLowerCase();
+                const productPrice = product.querySelector('.currency').textContent;
+
+                // Extract price number for filtering
+                const priceNumber = parseInt(productPrice.replace(/[^0-9]/g, ''));
+
+                // Search term matching
+                const matchesSearch = searchTerm === '' ||
+                    productName.includes(searchTerm) ||
+                    productDescription.includes(searchTerm);
+
+                // Category filtering
+                const matchesCategory = selectedCategory === 'all' ||
+                    (selectedCategory === 'health' && (productName.includes('health') || productName.includes('medical'))) ||
+                    (selectedCategory === 'auto' && (productName.includes('auto') || productName.includes('car') || productName.includes('vehicle'))) ||
+                    (selectedCategory === 'home' && (productName.includes('home') || productName.includes('property'))) ||
+                    (selectedCategory === 'life' && productName.includes('life')) ||
+                    (selectedCategory === 'travel' && productName.includes('travel'));
+
+                // Price filtering
+                const matchesPrice = selectedPriceRange === 'all' ||
+                    (selectedPriceRange === 'low' && priceNumber < 50000) ||
+                    (selectedPriceRange === 'medium' && priceNumber >= 50000 && priceNumber <= 100000) ||
+                    (selectedPriceRange === 'high' && priceNumber > 100000);
+
+                const shouldShow = matchesSearch && matchesCategory && matchesPrice;
+
+                if (shouldShow) {
+                    product.classList.remove('hidden');
+                    product.classList.add('highlighted');
+                    visibleCount++;
+                    hasResults = true;
+
+                    // Remove highlight after animation
+                    setTimeout(() => {
+                        product.classList.remove('highlighted');
+                    }, 1000);
+                } else {
+                    product.classList.add('hidden');
+                    product.classList.remove('highlighted');
+                }
+            });
+
+            // Update search results info
+            updateSearchResults(visibleCount, searchTerm);
+
+            // Show/hide no results message
+            toggleNoResultsMessage(hasResults);
+
+            // Show/hide clear button
+            clearSearchBtn.style.display = searchTerm ? 'block' : 'none';
+        }
+
+        function updateSearchResults(count, searchTerm) {
+            searchResultsCount.textContent = `Showing ${count} product${count !== 1 ? 's' : ''}`;
+
+            if (searchTerm) {
+                searchQuery.textContent = `for "${searchTerm}"`;
+                searchQuery.style.display = 'inline';
+            } else {
+                searchQuery.style.display = 'none';
+            }
+        }
+
+        function toggleNoResultsMessage(hasResults) {
+            if (!hasResults && !noResultsMessage) {
+                noResultsMessage = document.createElement('div');
+                noResultsMessage.className = 'no-results-message';
+                noResultsMessage.innerHTML = `
+                    <h3>🔍 No products found</h3>
+                    <p>Try adjusting your search terms or filters to find what you're looking for.</p>
+                    <button onclick="clearAllFilters()" class="btn" style="margin-top: 15px;">Clear All Filters</button>
+                `;
+                productsContainer.appendChild(noResultsMessage);
+            } else if (hasResults && noResultsMessage) {
+                noResultsMessage.remove();
+                noResultsMessage = null;
+            }
+        }
+
+        function clearAllFilters() {
+            searchInput.value = '';
+            categoryFilter.value = 'all';
+            priceFilter.value = 'all';
+            performSearch();
+        }
+
+        // Event listeners
+        searchInput.addEventListener('input', performSearch);
+        clearSearchBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            performSearch();
+        });
+        categoryFilter.addEventListener('change', performSearch);
+        priceFilter.addEventListener('change', performSearch);
+
+        // Add search keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 'f') {
+                e.preventDefault();
+                searchInput.focus();
+            }
+            if (e.key === 'Escape' && document.activeElement === searchInput) {
+                searchInput.blur();
+            }
+        });
+
+        // Add search suggestions (optional enhancement)
+        const searchSuggestions = ['health insurance', 'auto insurance', 'home insurance', 'life insurance', 'travel insurance', 'medical coverage', 'car coverage', 'property protection'];
+
+        searchInput.addEventListener('focus', () => {
+            searchInput.setAttribute('placeholder', 'Try: ' + searchSuggestions[Math.floor(Math.random() * searchSuggestions.length)]);
+        });
+
+        searchInput.addEventListener('blur', () => {
+            searchInput.setAttribute('placeholder', 'Search insurance products...');
+        });
+    </script>
+
+    <!-- Modern Professional Footer -->
+    <footer class="modern-footer">
+        <div class="footer-container">
+            <!-- Main Footer Content -->
+            <div class="footer-main">
+                <!-- Brand Section -->
+                <div class="footer-section footer-brand">
+                    <div class="footer-logo">
+                        <img src="{{ url_for('static', filename='images/logo_insuremyway.jpg') }}" alt="InsureMyWay Logo">
+                        <span class="footer-brand-text">InsureMyWay</span>
+                    </div>
+                    <p class="footer-description">
+                        Your trusted partner in comprehensive insurance solutions. Protecting what matters most with personalized coverage and exceptional service.
+                    </p>
+                    <div class="footer-social">
+                        <a href="https://facebook.com/insuremyway" class="social-link" aria-label="Facebook" target="_blank">
+                            <i class="fab fa-facebook-f social-icon"></i>
+                        </a>
+                        <a href="https://twitter.com/insuremyway" class="social-link" aria-label="Twitter/X" target="_blank">
+                            <i class="fab fa-x-twitter social-icon"></i>
+                        </a>
+                        <a href="https://instagram.com/insuremyway" class="social-link" aria-label="Instagram" target="_blank">
+                            <i class="fab fa-instagram social-icon"></i>
+                        </a>
+                        <a href="https://wa.me/250787592615" class="social-link" aria-label="WhatsApp" target="_blank">
+                            <i class="fab fa-whatsapp social-icon"></i>
+                        </a>
+                        <a href="https://linkedin.com/company/insuremyway" class="social-link" aria-label="LinkedIn" target="_blank">
+                            <i class="fab fa-linkedin-in social-icon"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Insurance Products -->
+                <div class="footer-section">
+                    <h3 class="footer-title">Insurance Products</h3>
+                    <ul class="footer-links">
+                        <li><a href="{{ url_for('products') }}">Health Insurance</a></li>
+                        <li><a href="{{ url_for('products') }}">Auto Insurance</a></li>
+                        <li><a href="{{ url_for('products') }}">Home Insurance</a></li>
+                        <li><a href="{{ url_for('products') }}">Life Insurance</a></li>
+                        <li><a href="{{ url_for('products') }}">Business Insurance</a></li>
+                        <li><a href="{{ url_for('products') }}">Travel Insurance</a></li>
+                    </ul>
+                </div>
+
+                <!-- Company Links -->
+                <div class="footer-section">
+                    <h3 class="footer-title">Company</h3>
+                    <ul class="footer-links">
+                        <li><a href="#about">About Us</a></li>
+                        <li><a href="#careers">Careers</a></li>
+                        <li><a href="#news">News & Updates</a></li>
+                        <li><a href="#investors">Investors</a></li>
+                        <li><a href="#partners">Partners</a></li>
+                        <li><a href="#testimonials">Customer Stories</a></li>
+                    </ul>
+                </div>
+
+                <!-- Support & Help -->
+                <div class="footer-section">
+                    <h3 class="footer-title">Support & Help</h3>
+                    <ul class="footer-links">
+                        <li><a href="{{ url_for('chat') }}">Help Center</a></li>
+                        <li><a href="#faq">FAQ</a></li>
+                        <li><a href="#claims">File a Claim</a></li>
+                        <li><a href="#contact">Contact Support</a></li>
+                        <li><a href="#live-chat">Live Chat</a></li>
+                        <li><a href="#documentation">Documentation</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact Information -->
+                <div class="footer-section">
+                    <h3 class="footer-title">Contact Info</h3>
+                    <div class="footer-contact">
+                        <div class="contact-item">
+                            <span class="contact-icon">📞</span>
+                            <div class="contact-details">
+                                <span class="contact-label">Phone</span>
+                                <a href="tel:+250787592615">+250 787 592 615</a>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <span class="contact-icon">✉️</span>
+                            <div class="contact-details">
+                                <span class="contact-label">Email</span>
+                                <a href="mailto:support@insuremyway.com">support@insuremyway.com</a>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <span class="contact-icon">📍</span>
+                            <div class="contact-details">
+                                <span class="contact-label">Address</span>
+                                <span>KG 15 Ave, Kigali, Rwanda</span>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <span class="contact-icon">🕒</span>
+                            <div class="contact-details">
+                                <span class="contact-label">Hours</span>
+                                <span>24/7 Support Available</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Bottom -->
+            <div class="footer-bottom">
+                <div class="footer-bottom-content">
+                    <div class="footer-copyright">
+                        <p>&copy; 2024 InsureMyWay. All rights reserved. | Licensed Insurance Provider in Rwanda</p>
+                    </div>
+                    <div class="footer-legal">
+                        <a href="#privacy">Privacy Policy</a>
+                        <a href="#terms">Terms & Conditions</a>
+                        <a href="#cookies">Cookie Policy</a>
+                        <a href="#accessibility">Accessibility</a>
+                        <a href="#security">Security</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

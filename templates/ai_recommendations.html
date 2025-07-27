@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Recommendations - InsureMyWay</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .user-profile {
+            background: #f8f9ff;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border-left: 5px solid #667eea;
+        }
+
+        .user-profile h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .profile-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .profile-item {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .profile-item strong {
+            color: #667eea;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .recommendations-grid {
+            display: grid;
+            gap: 25px;
+        }
+
+        .recommendation-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .recommendation-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .recommendation-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            border-color: #667eea;
+        }
+
+        .score-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .policy-name {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            margin-right: 100px;
+        }
+
+        .policy-type {
+            display: inline-block;
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+        }
+
+        .policy-coverage {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .policy-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .detail-item {
+            text-align: center;
+            background: #f8f9ff;
+            padding: 12px;
+            border-radius: 10px;
+        }
+
+        .detail-value {
+            font-weight: 600;
+            color: #667eea;
+            font-size: 1.1rem;
+        }
+
+        .detail-label {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .ai-explanation {
+            background: #f0f7ff;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            border-radius: 0 10px 10px 0;
+            margin-bottom: 20px;
+        }
+
+        .ai-explanation p {
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            text-decoration: none;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f8f9ff;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .navigation {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid #eee;
+        }
+
+        .no-recommendations {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .no-recommendations h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .profile-details {
+                grid-template-columns: 1fr;
+            }
+            
+            .policy-details {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 AI-Powered Recommendations</h1>
+            <p>Personalized insurance suggestions based on your profile</p>
+        </div>
+
+        <div class="content">
+            <div class="user-profile">
+                <h3>👤 Your Profile</h3>
+                <div class="profile-details">
+                    <div class="profile-item">
+                        <strong>Age:</strong>
+                        {{ user.age or 'Not specified' }}
+                    </div>
+                    <div class="profile-item">
+                        <strong>Occupation:</strong>
+                        {{ user.occupation or 'Not specified' }}
+                    </div>
+                    <div class="profile-item">
+                        <strong>Lifestyle:</strong>
+                        {{ user.lifestyle or 'Not specified' }}
+                    </div>
+                    <div class="profile-item">
+                        <strong>Health Status:</strong>
+                        {{ user.health_status or 'Not specified' }}
+                    </div>
+                </div>
+            </div>
+
+            {% if recommendations %}
+                <div class="recommendations-grid">
+                    {% for rec in recommendations %}
+                    <div class="recommendation-card">
+                        <div class="score-badge">{{ rec.score }}/100</div>
+                        
+                        <h3 class="policy-name">{{ rec.policy.name }}</h3>
+                        <span class="policy-type">{{ rec.policy.type }}</span>
+                        
+                        <p class="policy-coverage">{{ rec.policy.coverage }}</p>
+                        
+                        <div class="policy-details">
+                            <div class="detail-item">
+                                <div class="detail-value">${{ "%.2f"|format(rec.policy.premium) }}</div>
+                                <div class="detail-label">Monthly Premium</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-value">{{ rec.policy.min_age }}-{{ rec.policy.max_age }}</div>
+                                <div class="detail-label">Age Range</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-value">{{ rec.policy.risk_level.title() }}</div>
+                                <div class="detail-label">Risk Level</div>
+                            </div>
+                        </div>
+                        
+                        <div class="ai-explanation">
+                            <p>{{ rec.recommendation_text }}</p>
+                        </div>
+                        
+                        <div class="action-buttons">
+                            <a href="/purchase/{{ rec.policy.id }}" class="btn btn-primary">Purchase Policy</a>
+                            <a href="/policies" class="btn btn-secondary">View Details</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="no-recommendations">
+                    <h3>No Recommendations Available</h3>
+                    <p>Please update your profile information to receive personalized recommendations.</p>
+                    <a href="/dashboard" class="btn btn-primary" style="margin-top: 20px;">Update Profile</a>
+                </div>
+            {% endif %}
+
+            <div class="navigation">
+                <a href="/dashboard" class="btn btn-secondary">Back to Dashboard</a>
+                <a href="/policies" class="btn btn-primary">View All Policies</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

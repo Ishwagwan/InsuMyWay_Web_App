@@ -1,0 +1,126 @@
+<!-- Professional Unified Footer Component -->
+<footer class="modern-footer">
+  <div class="footer-container">
+    <!-- Main Footer Content -->
+    <div class="footer-main">
+      <!-- Brand Section -->
+      <div class="footer-section footer-brand">
+        <div class="footer-logo">
+          <img src="{{ url_for('static', filename='images/logo_insuremyway.jpg') }}" alt="InsureMyWay Logo">
+          <span class="footer-brand-text">InsureMyWay</span>
+        </div>
+        <p class="footer-description">
+          Your trusted partner in comprehensive insurance solutions. Protecting what matters most with AI-powered personalized coverage and exceptional service.
+        </p>
+        <div class="footer-social">
+          <a href="https://facebook.com/insuremyway" class="social-link" aria-label="Facebook" target="_blank">
+            <i class="fab fa-facebook-f social-icon"></i>
+          </a>
+          <a href="https://twitter.com/insuremyway" class="social-link" aria-label="Twitter/X" target="_blank">
+            <i class="fab fa-x-twitter social-icon"></i>
+          </a>
+          <a href="https://instagram.com/insuremyway" class="social-link" aria-label="Instagram" target="_blank">
+            <i class="fab fa-instagram social-icon"></i>
+          </a>
+          <a href="https://wa.me/250787592615" class="social-link" aria-label="WhatsApp" target="_blank">
+            <i class="fab fa-whatsapp social-icon"></i>
+          </a>
+          <a href="https://linkedin.com/company/insuremyway" class="social-link" aria-label="LinkedIn" target="_blank">
+            <i class="fab fa-linkedin-in social-icon"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Insurance Products -->
+      <div class="footer-section">
+        <h3 class="footer-title">Insurance Products</h3>
+        <ul class="footer-links">
+          <li><a href="{{ url_for('products') }}"><i class="fas fa-heartbeat"></i> Health Insurance</a></li>
+          <li><a href="{{ url_for('products') }}"><i class="fas fa-car"></i> Auto Insurance</a></li>
+          <li><a href="{{ url_for('products') }}"><i class="fas fa-home"></i> Home Insurance</a></li>
+          <li><a href="{{ url_for('products') }}"><i class="fas fa-user-shield"></i> Life Insurance</a></li>
+          <li><a href="{{ url_for('products') }}"><i class="fas fa-building"></i> Business Insurance</a></li>
+          <li><a href="{{ url_for('products') }}"><i class="fas fa-plane"></i> Travel Insurance</a></li>
+        </ul>
+      </div>
+
+      <!-- Company -->
+      <div class="footer-section">
+        <h3 class="footer-title">Company</h3>
+        <ul class="footer-links">
+          <li><a href="#about"><i class="fas fa-info-circle"></i> About Us</a></li>
+          <li><a href="#careers"><i class="fas fa-briefcase"></i> Careers</a></li>
+          <li><a href="#news"><i class="fas fa-newspaper"></i> News & Updates</a></li>
+          <li><a href="#investors"><i class="fas fa-chart-line"></i> Investors</a></li>
+          <li><a href="#partners"><i class="fas fa-handshake"></i> Partners</a></li>
+          <li><a href="#testimonials"><i class="fas fa-star"></i> Customer Stories</a></li>
+        </ul>
+      </div>
+
+      <!-- Support & Help -->
+      <div class="footer-section">
+        <h3 class="footer-title">Support & Help</h3>
+        <ul class="footer-links">
+          <li><a href="{{ url_for('chat') }}"><i class="fas fa-headset"></i> Help Center</a></li>
+          <li><a href="#faq"><i class="fas fa-question-circle"></i> FAQ</a></li>
+          <li><a href="#claims"><i class="fas fa-file-medical"></i> File a Claim</a></li>
+          <li><a href="#contact"><i class="fas fa-envelope"></i> Contact Support</a></li>
+          <li><a href="#live-chat"><i class="fas fa-comments"></i> Live Chat</a></li>
+          <li><a href="#documentation"><i class="fas fa-book"></i> Documentation</a></li>
+        </ul>
+      </div>
+
+      <!-- Contact Info -->
+      <div class="footer-section">
+        <h3 class="footer-title">Contact Info</h3>
+        <div class="footer-contact">
+          <div class="contact-item">
+            <i class="fas fa-phone contact-icon"></i>
+            <div class="contact-details">
+              <span class="contact-label">Phone</span>
+              <a href="tel:+250787592615">+250 787 592 615</a>
+            </div>
+          </div>
+          <div class="contact-item">
+            <i class="fas fa-envelope contact-icon"></i>
+            <div class="contact-details">
+              <span class="contact-label">Email</span>
+              <a href="mailto:support@insuremyway.com">support@insuremyway.com</a>
+            </div>
+          </div>
+          <div class="contact-item">
+            <i class="fas fa-map-marker-alt contact-icon"></i>
+            <div class="contact-details">
+              <span class="contact-label">Address</span>
+              <span>Kigali, Rwanda</span>
+            </div>
+          </div>
+          <div class="contact-item">
+            <i class="fas fa-clock contact-icon"></i>
+            <div class="contact-details">
+              <span class="contact-label">Hours</span>
+              <span>24/7 Support</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer Bottom -->
+    <div class="footer-bottom">
+      <div class="footer-bottom-content">
+        <div class="footer-copyright">
+          <p>&copy; {{ current_year or 2024 }} InsureMyWay. All rights reserved.</p>
+          <p class="footer-subtitle">Licensed Insurance Provider in Rwanda | Powered by AI Technology</p>
+        </div>
+        <div class="footer-legal">
+          <a href="{{ url_for('privacy') }}">Privacy Policy</a>
+          <a href="{{ url_for('terms') }}">Terms & Conditions</a>
+          <a href="#cookies">Cookie Policy</a>
+          <a href="#accessibility">Accessibility</a>
+          <a href="#security">Security</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>

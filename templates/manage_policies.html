@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}Manage Policies{% endblock %}
+{% block content %}
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card">
+                <div class="card-header text-center"><h2>Manage Policies</h2></div>
+                <div class="card-body">
+                    <h3>{{ 'Edit Policy' if editing_policy else 'Add New Policy' }}</h3>
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form.name.label(class="form-label") }}
+                                {{ form.name(class="form-control") }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form.type.label(class="form-label") }}
+                                {{ form.type(class="form-control") }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form.premium.label(class="form-label") }}
+                                {{ form.premium(class="form-control") }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form.coverage.label(class="form-label") }}
+                                {{ form.coverage(class="form-control") }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form.min_age.label(class="form-label") }}
+                                {{ form.min_age(class="form-control") }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form.max_age.label(class="form-label") }}
+                                {{ form.max_age(class="form-control") }}
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            {{ form.risk_level.label(class="form-label") }}
+                            {{ form.risk_level(class="form-control") }}
+                        </div>
+                        {{ form.submit(class="btn btn-primary w-100") }}
+                    </form>
+                    <h3 class="mt-4">Existing Policies</h3>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th>Premium</th>
+                                <th>Coverage</th>
+                                <th>Age Range</th>
+                                <th>Risk Level</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for policy in policies %}
+                                <tr>
+                                    <td>{{ policy.name }}</td>
+                                    <td>{{ policy.type | capitalize }}</td>
+                                    <td>{{ policy.premium | to_frw }}</td>
+                                    <td>{{ policy.coverage }}</td>
+                                    <td>{{ policy.min_age }}-{{ policy.max_age }}</td>
+                                    <td>{{ policy.risk_level | capitalize }}</td>
+                                    <td>
+                                        <a href="{{ url_for('edit_policy', policy_id=policy.id) }}" class="btn btn-sm btn-warning">Edit</a>
+                                        <form method="POST" action="{{ url_for('delete_policy', policy_id=policy.id) }}" style="display:inline;">
+                                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

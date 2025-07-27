@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InsureMyWay Chat Assistant</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --background-color: #f4f4f4;
+            --text-color: #333;
+            --navbar-bg: #007bff;
+            --navbar-text: white;
+            --box-bg: white;
+            --box-border: #ccc;
+            --box-shadow: rgba(0,0,0,0.1);
+            --chat-header-bg: #28a745;
+            --chat-header-text: white;
+            --chat-messages-bg: #f8f9fa;
+            --chat-bot-message-bg: #28a745;
+            --chat-bot-message-text: white;
+            --chat-user-message-bg: #e9ecef;
+            --chat-input-bg: #fff;
+            --chat-input-border: #ced4da;
+            --chat-input-btn-bg: #28a745;
+            --chat-input-btn-hover-bg: #218838;
+        }
+        [data-theme="dark"] {
+            --background-color: #1a1a1a;
+            --text-color: #e0e0e0;
+            --navbar-bg: #003087;
+            --navbar-text: #e0e0e0;
+            --box-bg: #2c2c2c;
+            --box-border: #444;
+            --box-shadow: rgba(255,255,255,0.1);
+            --chat-header-bg: #1e7e34;
+            --chat-header-text: #e0e0e0;
+            --chat-messages-bg: #222;
+            --chat-bot-message-bg: #1e7e34;
+            --chat-bot-message-text: #e0e0e0;
+            --chat-user-message-bg: #3a3a3a;
+            --chat-input-bg: #2c2c2c;
+            --chat-input-border: #555;
+            --chat-input-btn-bg: #1e7e34;
+            --chat-input-btn-hover-bg: #155724;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            transition: all 0.3s ease;
+        }
+        /* Professional Chat Header */
+        .chat-header-bar {
+            background: linear-gradient(135deg, var(--navbar-bg) 0%, #1e40af 100%);
+            padding: 20px 30px;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            box-sizing: border-box;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+        }
+
+        .chat-header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .brand-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .header-logo {
+            height: 60px;
+            width: 60px;
+            border-radius: 12px;
+            object-fit: cover;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            box-shadow:
+                0 4px 12px rgba(0, 0, 0, 0.2),
+                0 0 0 1px rgba(255, 255, 255, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            padding: 3px;
+        }
+
+        .brand-info {
+            color: white;
+        }
+
+        .brand-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: -0.025em;
+        }
+
+        .brand-subtitle {
+            font-size: 0.875rem;
+            margin: 0;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+
+        .chat-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 16px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .status-text {
+            color: white;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+                opacity: 0.4;
+            }
+            30% {
+                transform: translateY(-10px);
+                opacity: 1;
+            }
+        }
+        /* Professional Chat Container */
+        .chat-container {
+            width: 100%;
+            max-width: 800px;
+            height: calc(100vh - 140px);
+            margin: 120px auto 20px;
+            border: none;
+            border-radius: 16px;
+            background: var(--box-bg);
+            display: flex;
+            flex-direction: column;
+            box-shadow:
+                0 20px 60px rgba(0, 0, 0, 0.1),
+                0 8px 25px rgba(0, 0, 0, 0.08),
+                0 0 0 1px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        .chat-header {
+            background: linear-gradient(135deg, var(--chat-header-bg) 0%, #1e7e34 100%);
+            color: var(--chat-header-text);
+            padding: 20px 24px;
+            text-align: center;
+            border-top-left-radius: 16px;
+            border-top-right-radius: 16px;
+            font-size: 1.125rem;
+            font-weight: 600;
+            position: relative;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .chat-header::before {
+            content: '🤖';
+            position: absolute;
+            left: 24px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5rem;
+        }
+
+        .chat-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        }
+        .chat-messages {
+            flex-grow: 1;
+            padding: 24px;
+            overflow-y: auto;
+            background: var(--chat-messages-bg);
+            background-image:
+                radial-gradient(circle at 20% 20%, rgba(120, 119, 198, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 119, 198, 0.03) 0%, transparent 50%);
+            scroll-behavior: smooth;
+        }
+
+        .chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 3px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 0, 0, 0.3);
+        }
+        .message {
+            margin: 16px 0;
+            padding: 16px 20px;
+            border-radius: 18px;
+            max-width: 75%;
+            word-wrap: break-word;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            position: relative;
+            animation: messageSlideIn 0.3s ease-out;
+        }
+
+        @keyframes messageSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .user-message {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            margin-left: 25%;
+            text-align: right;
+            color: white;
+            border-bottom-right-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+        }
+
+        .user-message::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: -8px;
+            width: 0;
+            height: 0;
+            border: 8px solid transparent;
+            border-left-color: #0056b3;
+            border-bottom: none;
+        }
+
+        .bot-message {
+            background: var(--chat-bot-message-bg);
+            color: var(--chat-bot-message-text);
+            margin-right: 25%;
+            border-bottom-left-radius: 6px;
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2);
+            border: 1px solid rgba(40, 167, 69, 0.2);
+        }
+
+        .bot-message::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: -8px;
+            width: 0;
+            height: 0;
+            border: 8px solid transparent;
+            border-right-color: var(--chat-bot-message-bg);
+            border-bottom: none;
+        }
+        .chat-input {
+            display: flex;
+            padding: 20px 24px;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            background: var(--chat-input-bg);
+            gap: 12px;
+            align-items: flex-end;
+        }
+
+        .input-wrapper {
+            flex-grow: 1;
+            position: relative;
+        }
+
+        .chat-input input {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid var(--chat-input-border);
+            border-radius: 25px;
+            font-size: 1rem;
+            background-color: var(--chat-input-bg);
+            color: var(--text-color);
+            transition: all 0.3s ease;
+            resize: none;
+            outline: none;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .chat-input input:focus {
+            border-color: var(--chat-input-btn-bg);
+            box-shadow:
+                0 0 0 3px rgba(40, 167, 69, 0.1),
+                0 4px 12px rgba(0, 0, 0, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .chat-input input::placeholder {
+            color: var(--text-color);
+            opacity: 0.6;
+        }
+
+        .send-button {
+            padding: 16px 24px;
+            background: linear-gradient(135deg, var(--chat-input-btn-bg) 0%, #1e7e34 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+            min-width: 100px;
+        }
+
+        .send-button:hover {
+            background: linear-gradient(135deg, var(--chat-input-btn-hover-bg) 0%, #155724 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+        }
+
+        .send-button:active {
+            transform: translateY(0);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .chat-header-bar {
+                padding: 15px 20px;
+            }
+
+            .brand-section {
+                gap: 15px;
+            }
+
+            .header-logo {
+                height: 50px;
+                width: 50px;
+                border-radius: 10px;
+                border-width: 2px;
+                padding: 2px;
+            }
+
+            .brand-title {
+                font-size: 1.5rem;
+            }
+
+            .brand-subtitle {
+                font-size: 0.8rem;
+            }
+
+            .chat-container {
+                width: 95%;
+                margin: 100px auto 20px;
+                height: calc(100vh - 120px);
+                border-radius: 12px;
+            }
+
+            .chat-header {
+                padding: 16px 20px;
+                font-size: 1rem;
+            }
+
+            .chat-messages {
+                padding: 16px;
+            }
+
+            .message {
+                max-width: 85%;
+                padding: 12px 16px;
+                font-size: 0.9rem;
+            }
+
+            .user-message {
+                margin-left: 15%;
+            }
+
+            .bot-message {
+                margin-right: 15%;
+            }
+
+            .chat-input {
+                padding: 16px 20px;
+                gap: 10px;
+            }
+
+            .chat-input input {
+                padding: 14px 18px;
+                font-size: 0.95rem;
+            }
+
+            .send-button {
+                padding: 14px 20px;
+                font-size: 0.95rem;
+                min-width: 80px;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .chat-header-content {
+                flex-direction: column;
+                gap: 12px;
+                text-align: center;
+            }
+
+            .brand-section {
+                justify-content: center;
+            }
+
+            .header-logo {
+                height: 45px;
+                width: 45px;
+            }
+
+            .brand-title {
+                font-size: 1.25rem;
+            }
+
+            .chat-container {
+                width: 100%;
+                margin: 120px auto 10px;
+                border-radius: 0;
+                height: calc(100vh - 130px);
+            }
+
+            .chat-header {
+                padding: 12px 16px;
+                font-size: 0.95rem;
+            }
+
+            .chat-messages {
+                padding: 12px;
+            }
+
+            .message {
+                max-width: 90%;
+                padding: 10px 14px;
+                font-size: 0.85rem;
+                margin: 12px 0;
+            }
+
+            .user-message {
+                margin-left: 10%;
+            }
+
+            .bot-message {
+                margin-right: 10%;
+            }
+
+            .chat-input {
+                padding: 12px 16px;
+                gap: 8px;
+            }
+
+            .chat-input input {
+                padding: 12px 16px;
+                font-size: 0.9rem;
+            }
+
+            .send-button {
+                padding: 12px 16px;
+                font-size: 0.9rem;
+                min-width: 70px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Professional Chat Header -->
+    <div class="chat-header-bar">
+        <div class="chat-header-content">
+            <div class="brand-section">
+                <img src="{{ url_for('static', filename='images/logo_insuremyway.jpg') }}" alt="InsureMyWay Logo" class="header-logo">
+                <div class="brand-info">
+                    <h1 class="brand-title">InsureMyWay</h1>
+                    <p class="brand-subtitle">AI Insurance Assistant</p>
+                </div>
+            </div>
+            <div class="chat-status">
+                <div class="status-indicator"></div>
+                <span class="status-text">Online</span>
+            </div>
+        </div>
+    </div>
+    <div class="chat-container">
+        <div class="chat-header">AI Insurance Assistant</div>
+        <div class="chat-messages" id="chatMessages">
+            <!-- Messages will be dynamically added here -->
+        </div>
+        <div class="chat-input">
+            <div class="input-wrapper">
+                <input type="text" id="userInput" placeholder="Ask me anything about insurance...">
+            </div>
+            <button onclick="sendMessage()" class="send-button">Send</button>
+        </div>
+    </div>
+
+    <script>
+        // Initialize theme from localStorage
+        const body = document.body;
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        body.setAttribute('data-theme', savedTheme);
+
+        // Theme toggle functionality (if theme toggle exists)
+        const themeToggle = document.getElementById('themeToggle');
+        if (themeToggle) {
+            if (savedTheme === 'dark') {
+                themeToggle.checked = true;
+            }
+
+            themeToggle.addEventListener('change', () => {
+                if (themeToggle.checked) {
+                    body.setAttribute('data-theme', 'dark');
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    body.setAttribute('data-theme', 'light');
+                    localStorage.setItem('theme', 'light');
+                }
+            });
+        }
+
+        function addMessage(message, isUser = false) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+            messageDiv.textContent = message;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function sendMessage() {
+            const userInput = document.getElementById('userInput').value.trim();
+            if (!userInput) return;
+
+            addMessage(userInput, true);
+            document.getElementById('userInput').value = '';
+
+            // Show typing indicator
+            showTypingIndicator();
+
+            fetch('/get_response', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: userInput })
+            })
+            .then(response => response.json())
+            .then(data => {
+                hideTypingIndicator();
+                if (data.error) {
+                    addMessage(data.error, false);
+                } else {
+                    addMessage(data.response, false);
+                }
+            })
+            .catch(error => {
+                hideTypingIndicator();
+                addMessage('Error getting response. Please try again.', false);
+                console.error('Error:', error);
+            });
+        }
+
+        function showTypingIndicator() {
+            const chatMessages = document.getElementById('chatMessages');
+            const typingDiv = document.createElement('div');
+            typingDiv.id = 'typing-indicator';
+            typingDiv.className = 'message bot-message';
+            typingDiv.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 8px; opacity: 0.7;">
+                    <span>AI is typing</span>
+                    <div style="display: flex; gap: 2px;">
+                        <div style="width: 4px; height: 4px; background: currentColor; border-radius: 50%; animation: typing 1.4s infinite ease-in-out;"></div>
+                        <div style="width: 4px; height: 4px; background: currentColor; border-radius: 50%; animation: typing 1.4s infinite ease-in-out 0.2s;"></div>
+                        <div style="width: 4px; height: 4px; background: currentColor; border-radius: 50%; animation: typing 1.4s infinite ease-in-out 0.4s;"></div>
+                    </div>
+                </div>
+            `;
+            chatMessages.appendChild(typingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function hideTypingIndicator() {
+            const typingIndicator = document.getElementById('typing-indicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
+
+        // Add Enter key support
+        document.getElementById('userInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        const now = new Date();
+        addMessage(`Hello! I’m your InsureMyWay assistant. It’s ${now.toLocaleString('en-US', { timeZone: 'Africa/Johannesburg', hour12: true })} on ${now.toDateString()}. Please tell me your needs (e.g., health insurance, car coverage) or ask for help to get personalized plan recommendations.`);
+    </script>
+
+    <!-- Modern Professional Footer -->
+    <footer class="modern-footer">
+        <div class="footer-container">
+            <!-- Main Footer Content -->
+            <div class="footer-main">
+                <!-- Brand Section -->
+                <div class="footer-section footer-brand">
+                    <div class="footer-logo">
+                        <img src="/static/images/logo_insuremyway.jpg" alt="InsureMyWay Logo">
+                        <span class="footer-brand-text">InsureMyWay</span>
+                    </div>
+                    <p class="footer-description">
+                        Your trusted partner in comprehensive insurance solutions. Protecting what matters most with personalized coverage and exceptional service.
+                    </p>
+                    <div class="footer-social">
+                        <a href="https://facebook.com/insuremyway" class="social-link" aria-label="Facebook" target="_blank">
+                            <i class="fab fa-facebook-f social-icon"></i>
+                        </a>
+                        <a href="https://twitter.com/insuremyway" class="social-link" aria-label="Twitter/X" target="_blank">
+                            <i class="fab fa-x-twitter social-icon"></i>
+                        </a>
+                        <a href="https://instagram.com/insuremyway" class="social-link" aria-label="Instagram" target="_blank">
+                            <i class="fab fa-instagram social-icon"></i>
+                        </a>
+                        <a href="https://wa.me/250787592615" class="social-link" aria-label="WhatsApp" target="_blank">
+                            <i class="fab fa-whatsapp social-icon"></i>
+                        </a>
+                        <a href="https://linkedin.com/company/insuremyway" class="social-link" aria-label="LinkedIn" target="_blank">
+                            <i class="fab fa-linkedin-in social-icon"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Insurance Products -->
+                <div class="footer-section">
+                    <h3 class="footer-title">Insurance Products</h3>
+                    <ul class="footer-links">
+                        <li><a href="/products">Health Insurance</a></li>
+                        <li><a href="/products">Auto Insurance</a></li>
+                        <li><a href="/products">Home Insurance</a></li>
+                        <li><a href="/products">Life Insurance</a></li>
+                        <li><a href="/products">Business Insurance</a></li>
+                        <li><a href="/products">Travel Insurance</a></li>
+                    </ul>
+                </div>
+
+                <!-- Company Links -->
+                <div class="footer-section">
+                    <h3 class="footer-title">Company</h3>
+                    <ul class="footer-links">
+                        <li><a href="#about">About Us</a></li>
+                        <li><a href="#careers">Careers</a></li>
+                        <li><a href="#news">News & Updates</a></li>
+                        <li><a href="#investors">Investors</a></li>
+                        <li><a href="#partners">Partners</a></li>
+                        <li><a href="#testimonials">Customer Stories</a></li>
+                    </ul>
+                </div>
+
+                <!-- Support & Help -->
+                <div class="footer-section">
+                    <h3 class="footer-title">Support & Help</h3>
+                    <ul class="footer-links">
+                        <li><a href="/chat">Help Center</a></li>
+                        <li><a href="#faq">FAQ</a></li>
+                        <li><a href="#claims">File a Claim</a></li>
+                        <li><a href="#contact">Contact Support</a></li>
+                        <li><a href="#live-chat">Live Chat</a></li>
+                        <li><a href="#documentation">Documentation</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact Information -->
+                <div class="footer-section">
+                    <h3 class="footer-title">Contact Info</h3>
+                    <div class="footer-contact">
+                        <div class="contact-item">
+                            <span class="contact-icon">📞</span>
+                            <div class="contact-details">
+                                <span class="contact-label">Phone</span>
+                                <a href="tel:+250787592615">+250 787 592 615</a>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <span class="contact-icon">✉️</span>
+                            <div class="contact-details">
+                                <span class="contact-label">Email</span>
+                                <a href="mailto:support@insuremyway.com">support@insuremyway.com</a>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <span class="contact-icon">📍</span>
+                            <div class="contact-details">
+                                <span class="contact-label">Address</span>
+                                <span>KG 15 Ave, Kigali, Rwanda</span>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <span class="contact-icon">🕒</span>
+                            <div class="contact-details">
+                                <span class="contact-label">Hours</span>
+                                <span>24/7 Support Available</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Bottom -->
+            <div class="footer-bottom">
+                <div class="footer-bottom-content">
+                    <div class="footer-copyright">
+                        <p>&copy; 2024 InsureMyWay. All rights reserved. | Licensed Insurance Provider in Rwanda</p>
+                    </div>
+                    <div class="footer-legal">
+                        <a href="#privacy">Privacy Policy</a>
+                        <a href="#terms">Terms & Conditions</a>
+                        <a href="#cookies">Cookie Policy</a>
+                        <a href="#accessibility">Accessibility</a>
+                        <a href="#security">Security</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <style>
+        /* Modern Footer Styles for Chat */
+        .modern-footer {
+            background: linear-gradient(135deg, #1e40af 0%, #4f46e5 100%);
+            color: white;
+            margin-top: 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .modern-footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer-main {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1.5fr;
+            gap: 40px;
+            padding: 60px 0 40px;
+        }
+
+        .footer-section {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .footer-brand {
+            padding-right: 20px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .footer-logo img {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            object-fit: cover;
+        }
+
+        .footer-brand-text {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: white;
+        }
+
+        .footer-description {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+            margin-bottom: 25px;
+            font-size: 0.95rem;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 12px;
+        }
+
+        .social-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .social-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .social-icon {
+            font-size: 1.2rem;
+        }
+
+        .footer-title {
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .footer-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 30px;
+            height: 2px;
+            background: #f59e0b;
+            border-radius: 1px;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .footer-links a:hover {
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .footer-contact {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .contact-icon {
+            font-size: 1.1rem;
+            margin-top: 2px;
+        }
+
+        .contact-details {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .contact-label {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .contact-details a,
+        .contact-details span {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .contact-details a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 25px 0;
+        }
+
+        .footer-bottom-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .footer-copyright p {
+            color: rgba(255, 255, 255, 0.7);
+            margin: 0;
+            font-size: 0.9rem;
+        }
+
+        .footer-legal {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .footer-legal a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-legal a:hover {
+            color: white;
+        }
+
+        /* Responsive Footer */
+        @media (max-width: 1024px) {
+            .footer-main {
+                grid-template-columns: 2fr 1fr 1fr;
+                gap: 30px;
+            }
+
+            .footer-section:nth-child(4),
+            .footer-section:nth-child(5) {
+                grid-column: span 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .footer-main {
+                grid-template-columns: 1fr;
+                gap: 40px;
+                padding: 40px 0 30px;
+            }
+
+            .footer-brand {
+                padding-right: 0;
+                text-align: center;
+            }
+
+            .footer-social {
+                justify-content: center;
+            }
+
+            .footer-bottom-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+
+            .footer-legal {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .footer-container {
+                padding: 0 15px;
+            }
+
+            .footer-main {
+                padding: 30px 0 20px;
+                gap: 30px;
+            }
+
+            .footer-legal {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</body>
+</html>

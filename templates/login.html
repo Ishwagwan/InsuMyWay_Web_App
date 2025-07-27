@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Login - InsureMyWay{% endblock %}
+
+{% block content %}
+<div class="page-container">
+  <div class="page-header">
+    <h1 class="page-title">Welcome Back</h1>
+    <p class="page-subtitle">Sign in to your InsureMyWay account to manage your policies and get personalized recommendations</p>
+  </div>
+
+  <div style="max-width: 480px; margin: 0 auto;">
+    <div class="card">
+      <div class="card-body">
+        {% if error %}
+          <div class="alert alert-danger">
+            {{ error }}
+          </div>
+        {% endif %}
+
+        <form method="POST">
+          <div class="form-group">
+            <label for="username" class="form-label">Username</label>
+            <input type="text" id="username" name="username" class="form-control" required
+                   placeholder="Enter your username">
+          </div>
+
+          <div class="form-group">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" id="password" name="password" class="form-control" required
+                   placeholder="Enter your password">
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width: 100%; margin-bottom: 24px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <i class="fas fa-sign-in-alt" style="font-size: 1rem;"></i>
+            <span>Sign In</span>
+          </button>
+        </form>
+
+        <div style="text-align: center; padding-top: 24px; border-top: 1px solid var(--border-color);">
+          <p style="color: var(--text-secondary); margin-bottom: 16px;">
+            Don't have an account?
+          </p>
+          <a href="{{ url_for('signup') }}" class="btn btn-outline" style="min-width: 200px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <i class="fas fa-plus-circle" style="font-size: 1rem;"></i>
+            <span>Create Account</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 32px; color: var(--text-secondary);">
+      <p>
+        <a href="{{ url_for('index') }}" style="color: var(--primary-blue); text-decoration: none;">
+          ← Back to Home
+        </a>
+      </p>
+    </div>
+  </div>
+</div>
+
+<style>
+  .page-container {
+    background: linear-gradient(135deg, var(--background-secondary) 0%, var(--background-color) 100%);
+    min-height: calc(100vh - 140px);
+    padding-top: 80px;
+    padding-bottom: 80px;
+  }
+
+  .card {
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .form-control:focus {
+    transform: translateY(-1px);
+    box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1), 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
+
+
+
+  @media (max-width: 768px) {
+    .page-container {
+      padding: 40px 20px;
+    }
+
+    .page-title {
+      font-size: 2rem;
+    }
+
+  }
+</style>
+{% endblock %}

@@ -1,0 +1,409 @@
+{% extends "base.html" %}
+
+{% block title %}Profile - InsureMyWay{% endblock %}
+
+{% block content %}
+<div class="page-container">
+  <div class="page-header">
+    <h1 class="page-title">Your Profile</h1>
+    <p class="page-subtitle">Update your information to get personalized insurance recommendations</p>
+  </div>
+
+  <div style="max-width: 600px; margin: 0 auto;">
+    <div class="card">
+      <div class="card-header">
+        <h3 style="margin: 0; font-size: 1.25rem;">Personal Information</h3>
+      </div>
+      <div class="card-body">
+        {% if error %}
+          <div class="alert alert-danger">
+            {{ error }}
+          </div>
+        {% endif %}
+
+        <form method="POST">
+          <!-- Basic Information Section -->
+          <div style="margin-bottom: 32px;">
+            <h3 style="color: var(--primary-blue); margin-bottom: 20px; font-size: 1.1rem; border-bottom: 2px solid var(--primary-blue); padding-bottom: 8px;">
+              📋 Basic Information
+            </h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
+              <div class="form-group">
+                <label for="age" class="form-label">Age</label>
+                <input type="number" id="age" name="age" class="form-control"
+                       value="{{ user.age if user.age else '' }}"
+                       placeholder="Enter your age" min="18" max="100" required>
+              </div>
+
+              <div class="form-group">
+                <label for="occupation" class="form-label">Occupation</label>
+                <input type="text" id="occupation" name="occupation" class="form-control"
+                       value="{{ user.occupation if user.occupation else '' }}"
+                       placeholder="Enter your occupation" required>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
+              <div class="form-group">
+                <label for="lifestyle" class="form-label">Lifestyle</label>
+                <select id="lifestyle" name="lifestyle" class="form-control" required>
+                  <option value="" disabled {{ '' if user.lifestyle else 'selected' }}>Select your lifestyle</option>
+                  <option value="active" {{ 'selected' if user.lifestyle == 'active' }}>Active</option>
+                  <option value="sedentary" {{ 'selected' if user.lifestyle == 'sedentary' }}>Sedentary</option>
+                  <option value="moderate" {{ 'selected' if user.lifestyle == 'moderate' }}>Moderate</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="health_status" class="form-label">Health Status</label>
+                <select id="health_status" name="health_status" class="form-control" required>
+                  <option value="" disabled {{ '' if user.health_status else 'selected' }}>Select health status</option>
+                  <option value="excellent" {{ 'selected' if user.health_status == 'excellent' }}>Excellent</option>
+                  <option value="good" {{ 'selected' if user.health_status == 'good' }}>Good</option>
+                  <option value="fair" {{ 'selected' if user.health_status == 'fair' }}>Fair</option>
+                  <option value="poor" {{ 'selected' if user.health_status == 'poor' }}>Poor</option>
+                  <option value="smoker" {{ 'selected' if user.health_status == 'smoker' }}>Smoker</option>
+                  <option value="non-smoker" {{ 'selected' if user.health_status == 'non-smoker' }}>Non-Smoker</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Personal & Family Information Section -->
+          <div style="margin-bottom: 32px;">
+            <h3 style="color: var(--primary-blue); margin-bottom: 20px; font-size: 1.1rem; border-bottom: 2px solid var(--primary-blue); padding-bottom: 8px;">
+              👨‍👩‍👧‍👦 Personal & Family Information
+            </h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
+              <div class="form-group">
+                <label for="marital_status" class="form-label">Marital Status</label>
+                <select id="marital_status" name="marital_status" class="form-control">
+                  <option value="" disabled {{ '' if user.marital_status else 'selected' }}>Select marital status</option>
+                  <option value="single" {{ 'selected' if user.marital_status == 'single' }}>Single</option>
+                  <option value="married" {{ 'selected' if user.marital_status == 'married' }}>Married</option>
+                  <option value="divorced" {{ 'selected' if user.marital_status == 'divorced' }}>Divorced</option>
+                  <option value="widowed" {{ 'selected' if user.marital_status == 'widowed' }}>Widowed</option>
+                  <option value="domestic_partnership" {{ 'selected' if user.marital_status == 'domestic_partnership' }}>Domestic Partnership</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="dependents" class="form-label">Number of Dependents</label>
+                <input type="number" id="dependents" name="dependents" class="form-control"
+                       value="{{ user.dependents if user.dependents else '0' }}"
+                       placeholder="Number of dependents" min="0" max="10">
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
+              <div class="form-group">
+                <label for="family_medical_history" class="form-label">Family Medical History</label>
+                <select id="family_medical_history" name="family_medical_history" class="form-control">
+                  <option value="" disabled {{ '' if user.family_medical_history else 'selected' }}>Select family medical history</option>
+                  <option value="none" {{ 'selected' if user.family_medical_history == 'none' }}>No significant history</option>
+                  <option value="minor" {{ 'selected' if user.family_medical_history == 'minor' }}>Minor conditions</option>
+                  <option value="major" {{ 'selected' if user.family_medical_history == 'major' }}>Major conditions</option>
+                  <option value="chronic" {{ 'selected' if user.family_medical_history == 'chronic' }}>Chronic diseases</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="location" class="form-label">Location</label>
+                <input type="text" id="location" name="location" class="form-control"
+                       value="{{ user.location if user.location else '' }}"
+                       placeholder="City/Region (e.g., Kigali, Butare)">
+              </div>
+            </div>
+          </div>
+
+          <!-- Employment & Financial Information Section -->
+          <div style="margin-bottom: 32px;">
+            <h3 style="color: var(--primary-blue); margin-bottom: 20px; font-size: 1.1rem; border-bottom: 2px solid var(--primary-blue); padding-bottom: 8px;">
+              💼 Employment & Financial Information
+            </h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
+              <div class="form-group">
+                <label for="employment_type" class="form-label">Employment Type</label>
+                <select id="employment_type" name="employment_type" class="form-control">
+                  <option value="" disabled {{ '' if user.employment_type else 'selected' }}>Select employment type</option>
+                  <option value="full_time" {{ 'selected' if user.employment_type == 'full_time' }}>Full-time Employee</option>
+                  <option value="part_time" {{ 'selected' if user.employment_type == 'part_time' }}>Part-time Employee</option>
+                  <option value="self_employed" {{ 'selected' if user.employment_type == 'self_employed' }}>Self-employed</option>
+                  <option value="freelancer" {{ 'selected' if user.employment_type == 'freelancer' }}>Freelancer</option>
+                  <option value="student" {{ 'selected' if user.employment_type == 'student' }}>Student</option>
+                  <option value="retired" {{ 'selected' if user.employment_type == 'retired' }}>Retired</option>
+                  <option value="unemployed" {{ 'selected' if user.employment_type == 'unemployed' }}>Unemployed</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="annual_income" class="form-label">Annual Income Range</label>
+                <select id="annual_income" name="annual_income" class="form-control">
+                  <option value="" disabled {{ '' if user.annual_income else 'selected' }}>Select income range</option>
+                  <option value="under_1m" {{ 'selected' if user.annual_income == 'under_1m' }}>Under 1M FRW</option>
+                  <option value="1m_3m" {{ 'selected' if user.annual_income == '1m_3m' }}>1M - 3M FRW</option>
+                  <option value="3m_5m" {{ 'selected' if user.annual_income == '3m_5m' }}>3M - 5M FRW</option>
+                  <option value="5m_10m" {{ 'selected' if user.annual_income == '5m_10m' }}>5M - 10M FRW</option>
+                  <option value="10m_20m" {{ 'selected' if user.annual_income == '10m_20m' }}>10M - 20M FRW</option>
+                  <option value="over_20m" {{ 'selected' if user.annual_income == 'over_20m' }}>Over 20M FRW</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
+              <div class="form-group">
+                <label for="savings_level" class="form-label">Savings Level <span style="color: red;">*</span></label>
+                <select id="savings_level" name="savings_level" class="form-control" required>
+                  <option value="" disabled {{ '' if user.savings_level else 'selected' }}>Select savings level</option>
+                  <option value="low" {{ 'selected' if user.savings_level == 'low' }}>Low (Less than 3 months expenses)</option>
+                  <option value="moderate" {{ 'selected' if user.savings_level == 'moderate' }}>Moderate (3-6 months expenses)</option>
+                  <option value="high" {{ 'selected' if user.savings_level == 'high' }}>High (6-12 months expenses)</option>
+                  <option value="substantial" {{ 'selected' if user.savings_level == 'substantial' }}>Substantial (Over 1 year expenses)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="debt_status" class="form-label">Debt Status <span style="color: red;">*</span></label>
+                <select id="debt_status" name="debt_status" class="form-control" required>
+                  <option value="" disabled {{ '' if user.debt_status else 'selected' }}>Select debt status</option>
+                  <option value="none" {{ 'selected' if user.debt_status == 'none' }}>No Debt</option>
+                  <option value="low" {{ 'selected' if user.debt_status == 'low' }}>Low Debt (Less than 20% of income)</option>
+                  <option value="moderate" {{ 'selected' if user.debt_status == 'moderate' }}>Moderate Debt (20-40% of income)</option>
+                  <option value="high" {{ 'selected' if user.debt_status == 'high' }}>High Debt (Over 40% of income)</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
+              <div class="form-group">
+                <label for="business_ownership" class="form-label">Business Ownership</label>
+                <select id="business_ownership" name="business_ownership" class="form-control">
+                  <option value="" disabled {{ '' if user.business_ownership else 'selected' }}>Select business ownership</option>
+                  <option value="none" {{ 'selected' if user.business_ownership == 'none' }}>No Business</option>
+                  <option value="small" {{ 'selected' if user.business_ownership == 'small' }}>Small Business (1-10 employees)</option>
+                  <option value="medium" {{ 'selected' if user.business_ownership == 'medium' }}>Medium Business (11-50 employees)</option>
+                  <option value="large" {{ 'selected' if user.business_ownership == 'large' }}>Large Business (50+ employees)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="residence_type" class="form-label">Residence Type</label>
+                <select id="residence_type" name="residence_type" class="form-control">
+                  <option value="" disabled {{ '' if user.residence_type else 'selected' }}>Select residence type</option>
+                  <option value="own_house" {{ 'selected' if user.residence_type == 'own_house' }}>Own House</option>
+                  <option value="own_apartment" {{ 'selected' if user.residence_type == 'own_apartment' }}>Own Apartment</option>
+                  <option value="rent_house" {{ 'selected' if user.residence_type == 'rent_house' }}>Rent House</option>
+                  <option value="rent_apartment" {{ 'selected' if user.residence_type == 'rent_apartment' }}>Rent Apartment</option>
+                  <option value="family_home" {{ 'selected' if user.residence_type == 'family_home' }}>Family Home</option>
+                  <option value="shared_accommodation" {{ 'selected' if user.residence_type == 'shared_accommodation' }}>Shared Accommodation</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Lifestyle & Preferences Section -->
+          <div style="margin-bottom: 32px;">
+            <h3 style="color: var(--primary-blue); margin-bottom: 20px; font-size: 1.1rem; border-bottom: 2px solid var(--primary-blue); padding-bottom: 8px;">
+              🎯 Lifestyle & Preferences
+            </h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
+              <div class="form-group">
+                <label for="vehicle_ownership" class="form-label">Vehicle Ownership</label>
+                <select id="vehicle_ownership" name="vehicle_ownership" class="form-control">
+                  <option value="" disabled {{ '' if user.vehicle_ownership else 'selected' }}>Select vehicle ownership</option>
+                  <option value="own_car" {{ 'selected' if user.vehicle_ownership == 'own_car' }}>Own Car</option>
+                  <option value="own_motorcycle" {{ 'selected' if user.vehicle_ownership == 'own_motorcycle' }}>Own Motorcycle</option>
+                  <option value="lease_car" {{ 'selected' if user.vehicle_ownership == 'lease_car' }}>Lease Car</option>
+                  <option value="company_car" {{ 'selected' if user.vehicle_ownership == 'company_car' }}>Company Car</option>
+                  <option value="none" {{ 'selected' if user.vehicle_ownership == 'none' }}>No Vehicle</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="travel_frequency" class="form-label">Travel Frequency</label>
+                <select id="travel_frequency" name="travel_frequency" class="form-control">
+                  <option value="" disabled {{ '' if user.travel_frequency else 'selected' }}>Select travel frequency</option>
+                  <option value="frequent" {{ 'selected' if user.travel_frequency == 'frequent' }}>Frequent (Monthly)</option>
+                  <option value="occasional" {{ 'selected' if user.travel_frequency == 'occasional' }}>Occasional (Few times/year)</option>
+                  <option value="rare" {{ 'selected' if user.travel_frequency == 'rare' }}>Rare (Once/year)</option>
+                  <option value="never" {{ 'selected' if user.travel_frequency == 'never' }}>Never</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr; gap: 24px; margin-bottom: 24px;">
+              <div class="form-group">
+                <label for="hobbies_activities" class="form-label">Hobbies & Activities</label>
+                <input type="text" id="hobbies_activities" name="hobbies_activities" class="form-control"
+                       value="{{ user.hobbies_activities if user.hobbies_activities else '' }}"
+                       placeholder="e.g., Sports, Travel, Photography, Music (comma-separated)">
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
+              <div class="form-group">
+                <label for="exercise_habits" class="form-label">Exercise Habits <span style="color: red;">*</span></label>
+                <select id="exercise_habits" name="exercise_habits" class="form-control" required>
+                  <option value="" disabled {{ '' if user.exercise_habits else 'selected' }}>Select exercise habits</option>
+                  <option value="never" {{ 'selected' if user.exercise_habits == 'never' }}>Never Exercise</option>
+                  <option value="rarely" {{ 'selected' if user.exercise_habits == 'rarely' }}>Rarely (Less than once/week)</option>
+                  <option value="regularly" {{ 'selected' if user.exercise_habits == 'regularly' }}>Regularly (2-3 times/week)</option>
+                  <option value="daily" {{ 'selected' if user.exercise_habits == 'daily' }}>Daily Exercise</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="smoking_status" class="form-label">Smoking Status <span style="color: red;">*</span></label>
+                <select id="smoking_status" name="smoking_status" class="form-control" required>
+                  <option value="" disabled {{ '' if user.smoking_status else 'selected' }}>Select smoking status</option>
+                  <option value="never" {{ 'selected' if user.smoking_status == 'never' }}>Never Smoked</option>
+                  <option value="former" {{ 'selected' if user.smoking_status == 'former' }}>Former Smoker (Quit)</option>
+                  <option value="current" {{ 'selected' if user.smoking_status == 'current' }}>Current Smoker</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr; gap: 24px; margin-bottom: 24px;">
+              <div class="form-group">
+                <label for="chronic_conditions" class="form-label">Chronic Health Conditions</label>
+                <input type="text" id="chronic_conditions" name="chronic_conditions" class="form-control"
+                       value="{{ user.chronic_conditions if user.chronic_conditions else '' }}"
+                       placeholder="e.g., Diabetes, Hypertension, Asthma (leave blank if none)">
+              </div>
+            </div>
+          </div>
+
+          <!-- Insurance Preferences Section -->
+          <div style="margin-bottom: 32px;">
+            <h3 style="color: var(--primary-blue); margin-bottom: 20px; font-size: 1.1rem; border-bottom: 2px solid var(--primary-blue); padding-bottom: 8px;">
+              🛡️ Insurance Preferences
+            </h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
+              <div class="form-group">
+                <label for="risk_tolerance" class="form-label">Risk Tolerance</label>
+                <select id="risk_tolerance" name="risk_tolerance" class="form-control">
+                  <option value="" disabled {{ '' if user.risk_tolerance else 'selected' }}>Select risk tolerance</option>
+                  <option value="conservative" {{ 'selected' if user.risk_tolerance == 'conservative' }}>Conservative (Low Risk)</option>
+                  <option value="moderate" {{ 'selected' if user.risk_tolerance == 'moderate' }}>Moderate (Medium Risk)</option>
+                  <option value="aggressive" {{ 'selected' if user.risk_tolerance == 'aggressive' }}>Aggressive (High Risk)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="insurance_experience" class="form-label">Insurance Experience</label>
+                <select id="insurance_experience" name="insurance_experience" class="form-control">
+                  <option value="" disabled {{ '' if user.insurance_experience else 'selected' }}>Select experience level</option>
+                  <option value="beginner" {{ 'selected' if user.insurance_experience == 'beginner' }}>Beginner (First time)</option>
+                  <option value="intermediate" {{ 'selected' if user.insurance_experience == 'intermediate' }}>Intermediate (Some experience)</option>
+                  <option value="experienced" {{ 'selected' if user.insurance_experience == 'experienced' }}>Experienced (Very familiar)</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr; gap: 24px; margin-bottom: 32px;">
+              <div class="form-group">
+                <label for="coverage_priority" class="form-label">Coverage Priority</label>
+                <select id="coverage_priority" name="coverage_priority" class="form-control">
+                  <option value="" disabled {{ '' if user.coverage_priority else 'selected' }}>What's most important to you?</option>
+                  <option value="cost" {{ 'selected' if user.coverage_priority == 'cost' }}>Lowest Cost/Premium</option>
+                  <option value="coverage" {{ 'selected' if user.coverage_priority == 'coverage' }}>Maximum Coverage</option>
+                  <option value="service" {{ 'selected' if user.coverage_priority == 'service' }}>Best Customer Service</option>
+                  <option value="flexibility" {{ 'selected' if user.coverage_priority == 'flexibility' }}>Policy Flexibility</option>
+                  <option value="reputation" {{ 'selected' if user.coverage_priority == 'reputation' }}>Company Reputation</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 16px; justify-content: flex-end;">
+            <a href="{{ url_for('dashboard') }}" class="btn btn-outline">
+              Cancel
+            </a>
+            <button type="submit" class="btn btn-primary" style="min-width: 120px;">
+              Save Profile
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Profile Completion Status -->
+    <div class="card" style="margin-top: 40px;">
+      <div class="card-body">
+        <h4 style="margin-bottom: 20px; color: var(--text-primary);">Profile Completion</h4>
+        {% set completion_fields = [
+          ('Age', user.age),
+          ('Occupation', user.occupation),
+          ('Lifestyle', user.lifestyle),
+          ('Health Status', user.health_status),
+          ('Marital Status', user.marital_status),
+          ('Annual Income', user.annual_income),
+          ('Employment Type', user.employment_type),
+          ('Residence Type', user.residence_type),
+          ('Vehicle Ownership', user.vehicle_ownership),
+          ('Risk Tolerance', user.risk_tolerance),
+          ('Insurance Experience', user.insurance_experience),
+          ('Coverage Priority', user.coverage_priority),
+          ('Savings Level', user.savings_level),
+          ('Debt Status', user.debt_status),
+          ('Exercise Habits', user.exercise_habits),
+          ('Smoking Status', user.smoking_status),
+          ('Dependents', user.dependents),
+          ('Travel Frequency', user.travel_frequency)
+        ] %}
+        {% set completed = completion_fields | selectattr('1') | list | length %}
+        {% set total = completion_fields | length %}
+        {% set percentage = (completed / total * 100) | round | int %}
+
+        <div style="margin-bottom: 16px;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <span style="color: var(--text-secondary);">{{ completed }}/{{ total }} fields completed</span>
+            <span style="font-weight: 600; color: var(--primary-blue);">{{ percentage }}%</span>
+          </div>
+          <div style="width: 100%; height: 8px; background-color: var(--border-color); border-radius: 4px; overflow: hidden;">
+            <div id="progress-bar" style="height: 100%; background: linear-gradient(90deg, var(--primary-blue), var(--success-green)); transition: width 0.3s ease;"></div>
+          </div>
+        </div>
+
+        {% if percentage < 100 %}
+        <p style="color: var(--text-secondary); font-size: 0.875rem; margin: 0;">
+          Complete your profile to get better insurance recommendations tailored to your needs.
+        </p>
+        {% else %}
+        <p style="color: var(--success-green); font-size: 0.875rem; margin: 0;">
+          ✓ Your profile is complete! You'll receive the most accurate recommendations.
+        </p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .form-control:focus {
+    transform: translateY(-1px);
+    box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1), 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
+
+  @media (max-width: 768px) {
+    .page-container > div:first-of-type > div > div > form > div {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    .page-container > div:first-of-type > div > div > form > div:last-of-type {
+      flex-direction: column;
+    }
+  }
+</style>
+
+<script>
+  // Set progress bar width
+  document.addEventListener('DOMContentLoaded', function() {
+    const progressBar = document.getElementById('progress-bar');
+    if (progressBar) {
+      progressBar.style.width = '{{ percentage }}%';
+    }
+  });
+</script>
+{% endblock %}

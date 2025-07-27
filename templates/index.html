@@ -1,0 +1,2847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>InsureMyWay Home</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-blue: #1e3a8a;
+      --primary-blue-light: #3b82f6;
+      --primary-blue-dark: #1e40af;
+      --secondary-gold: #2e0bf5;
+      --secondary-gold-light: #8f8f91;
+      --background-color: #ffffff;
+      --background-secondary: #f8fafc;
+      --text-primary: #1f2937;
+      --text-secondary: #6b7280;
+      --text-light: #9ca3af;
+      --border-color: #e5e7eb;
+      --shadow-light: rgba(0, 0, 0, 0.05);
+      --shadow-medium: rgba(0, 0, 0, 0.1);
+      --shadow-strong: rgba(0, 0, 0, 0.15);
+      --success-green: #10b981;
+      --accent-navy: #1e293b;
+    }
+
+    [data-theme="dark"] {
+      --background-color: #0f172a;
+      --background-secondary: #1e293b;
+      --text-primary: #f1f5f9;
+      --text-secondary: #cbd5e1;
+      --text-light: #94a3b8;
+      --border-color: #334155;
+      --shadow-light: rgba(255, 255, 255, 0.05);
+      --shadow-medium: rgba(255, 255, 255, 0.1);
+      --shadow-strong: rgba(255, 255, 255, 0.15);
+    }
+
+    body {
+      font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      background-color: var(--background-color);
+      color: var(--text-primary);
+      transition: all 0.3s ease;
+      line-height: 1.6;
+      font-size: 16px;
+      min-height: 100vh;
+    }
+
+    .hero-section {
+      background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
+      min-height: 600px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: white;
+      overflow: hidden;
+    }
+
+    .hero-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url("{{ url_for('static', filename='images/home_background.jpg') }}") center/cover;
+      opacity: 0.1;
+      z-index: 1;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 800px;
+      padding: 0 20px;
+    }
+
+    .hero-section h1 {
+      font-size: 3.5rem;
+      font-weight: 700;
+      margin: 0 0 24px;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+    }
+
+    .hero-section .hero-subtitle {
+      font-size: 1.25rem;
+      margin-bottom: 40px;
+      opacity: 0.95;
+      font-weight: 400;
+      line-height: 1.6;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* Hero Dynamic Elements */
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 8px 16px;
+      border-radius: 20px;
+      margin-bottom: 24px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      animation: fadeInUp 0.8s ease 0.2s both;
+    }
+
+    .badge-icon {
+      font-size: 16px;
+    }
+
+    .badge-text {
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+
+    .hero-features {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin: 32px 0;
+      flex-wrap: wrap;
+    }
+
+    .hero-feature {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 12px 20px;
+      border-radius: 12px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.3s ease;
+      animation: fadeInUp 0.8s ease 0.4s both;
+    }
+
+    .hero-feature:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .feature-icon {
+      font-size: 18px;
+    }
+
+    .feature-text {
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .btn-icon {
+      margin-right: 8px;
+      font-size: 16px;
+    }
+
+    .live-activity {
+      margin-top: 40px;
+      display: flex;
+      justify-content: center;
+      animation: fadeInUp 0.8s ease 0.6s both;
+    }
+
+    .activity-indicator {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 12px 24px;
+      border-radius: 25px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      background: #10b981;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.2); opacity: 0.7; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .activity-text {
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    #live-users {
+      font-weight: 700;
+      color: #10b981;
+    }
+
+    .navbar {
+      background-color: var(--background-color);
+      backdrop-filter: blur(10px);
+      padding: 20px 0;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 1px 3px var(--shadow-light);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .navbar .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .navbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .navbar-brand:hover {
+      transform: scale(1.02);
+    }
+
+    .navbar-brand img {
+      height: 75px;
+      width: 75px;
+      border-radius: 15px;
+      object-fit: cover;
+      border: 4px solid rgba(30, 58, 138, 0.15);
+      box-shadow:
+        0 6px 16px rgba(30, 58, 138, 0.2),
+        0 0 0 1px rgba(30, 58, 138, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+      transition: all 0.3s ease;
+      background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+      padding: 4px;
+      position: relative;
+    }
+
+    .navbar-brand img::before {
+      content: '';
+      position: absolute;
+      top: -3px;
+      left: -3px;
+      right: -3px;
+      bottom: -3px;
+      background: linear-gradient(135deg, rgba(30, 58, 138, 0.3), rgba(30, 58, 138, 0.1));
+      border-radius: 18px;
+      z-index: -1;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .navbar-brand:hover img {
+      border-color: rgba(30, 58, 138, 0.3);
+      box-shadow:
+        0 8px 25px rgba(30, 58, 138, 0.3),
+        0 0 0 1px rgba(30, 58, 138, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+      transform: rotate(2deg) scale(1.02);
+    }
+
+    .navbar-brand-text {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary-blue);
+      text-decoration: none;
+    }
+
+    .navbar-nav {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    /* Compact Navbar Search Styles */
+    .navbar-search-container {
+      position: relative;
+      margin-right: 8px;
+    }
+
+    .navbar-search-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      background: var(--background-secondary);
+      border-radius: 20px;
+      border: 2px solid var(--border-color);
+      transition: all 0.3s ease;
+      overflow: hidden;
+      min-width: 200px;
+    }
+
+    .navbar-search-wrapper:hover {
+      border-color: var(--primary-blue);
+      box-shadow: 0 2px 8px rgba(79, 70, 229, 0.15);
+    }
+
+    .navbar-search-wrapper:focus-within {
+      border-color: var(--primary-blue);
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+
+    .navbar-search-input {
+      flex: 1;
+      padding: 8px 35px 8px 30px;
+      border: none;
+      background: transparent;
+      font-size: 0.875rem;
+      color: var(--text-primary);
+      outline: none;
+      min-width: 120px;
+    }
+
+    .navbar-search-input::placeholder {
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+    }
+
+    .navbar-search-icon {
+      position: absolute;
+      left: 10px;
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      z-index: 2;
+    }
+
+    .navbar-search-btn {
+      background: var(--primary-blue);
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 32px;
+    }
+
+    .navbar-search-btn:hover {
+      background: var(--primary-blue-dark);
+      transform: translateX(1px);
+    }
+
+    .navbar-search-btn i {
+      font-size: 0.75rem;
+    }
+
+    /* Language Dropdown Styles */
+    .language-dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    .language-button {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      background: var(--background-secondary);
+      border: 2px solid var(--border-color);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      min-width: 70px;
+    }
+
+    .language-button:hover {
+      border-color: var(--primary-blue);
+      background: var(--background-color);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15);
+    }
+
+    .language-arrow {
+      font-size: 0.75rem;
+      transition: transform 0.3s ease;
+      color: var(--text-secondary);
+    }
+
+    .language-dropdown.active .language-arrow {
+      transform: rotate(180deg);
+    }
+
+    .language-menu {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      background: var(--background-color);
+      border: 2px solid var(--border-color);
+      border-radius: 12px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: all 0.3s ease;
+      z-index: 1000;
+      min-width: 220px;
+      backdrop-filter: blur(10px);
+    }
+
+    .language-dropdown.active .language-menu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .language-menu-header {
+      padding: 12px 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+      border-bottom: 1px solid var(--border-color);
+      font-size: 0.875rem;
+      background: var(--background-secondary);
+      border-radius: 10px 10px 0 0;
+    }
+
+    .language-options {
+      padding: 8px 0;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .language-option {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      color: var(--text-primary);
+      font-size: 0.875rem;
+    }
+
+    .language-option:hover {
+      background: var(--background-secondary);
+      color: var(--primary-blue);
+      transform: translateX(4px);
+    }
+
+    .language-option.active {
+      background: linear-gradient(135deg, var(--primary-blue), var(--primary-blue-dark));
+      color: white;
+    }
+
+    .language-flag {
+      font-size: 1.2rem;
+      min-width: 24px;
+    }
+
+    .language-name {
+      flex: 1;
+      font-weight: 500;
+    }
+
+    .language-code {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      font-weight: 600;
+      background: var(--background-secondary);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .language-option:hover .language-code {
+      background: rgba(255, 255, 255, 0.2);
+      color: var(--primary-blue);
+    }
+
+    .language-option.active .language-code {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+    }
+
+    .navbar a {
+      color: var(--text-primary);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s ease;
+      position: relative;
+    }
+
+    .navbar a:hover {
+      color: var(--primary-blue);
+    }
+
+    .navbar a:not(.btn) {
+      color: var(--text-primary);
+    }
+
+    .navbar a:not(.btn):hover {
+      color: var(--primary-blue);
+    }
+
+    /* Navbar Button Specific Styling */
+    .navbar .btn {
+      padding: 8px 16px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      min-width: auto;
+      white-space: nowrap;
+    }
+
+    .navbar .btn-primary {
+      background-color: var(--primary-blue);
+      color: white;
+      border: 2px solid var(--primary-blue);
+    }
+
+    .navbar .btn-primary:hover {
+      background-color: var(--primary-blue-dark);
+      border-color: var(--primary-blue-dark);
+      color: white;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3);
+    }
+
+    .navbar .btn-outline {
+      background-color: transparent;
+      color: var(--primary-blue);
+      border: 2px solid var(--primary-blue);
+    }
+
+    .navbar .btn-outline:hover {
+      background-color: var(--primary-blue);
+      color: white;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3);
+    }
+
+    /* Navbar button icons */
+    .navbar .btn span:first-child {
+      font-size: 1rem;
+    }
+
+    /* Settings Dropdown */
+    .settings-dropdown {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .settings-button {
+      cursor: pointer;
+      padding: 10px 16px;
+      background-color: var(--background-secondary);
+      color: var(--text-secondary);
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      border: 1px solid var(--border-color);
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      user-select: none;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .settings-button:hover {
+      background-color: var(--primary-blue);
+      color: white;
+    }
+
+    .settings-menu {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 8px;
+      background-color: var(--background-color);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      box-shadow: 0 4px 20px var(--shadow-medium);
+      min-width: 180px;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: all 0.3s ease;
+    }
+
+    .settings-menu.show {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .settings-menu-header {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-color);
+      font-weight: 600;
+      color: var(--text-primary);
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .theme-options {
+      padding: 8px 0;
+    }
+
+    .theme-option {
+      display: flex;
+      align-items: center;
+      padding: 10px 16px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+      gap: 12px;
+    }
+
+    .theme-option:hover {
+      background-color: var(--background-secondary);
+    }
+
+    .theme-option.active {
+      background-color: var(--primary-blue);
+      color: white;
+    }
+
+    .theme-option.active .theme-icon {
+      color: white;
+    }
+
+    .theme-icon {
+      font-size: 16px;
+      width: 20px;
+      text-align: center;
+    }
+
+    .theme-label {
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    /* Notification Animations */
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideOut {
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+    }
+
+    .container {
+      display: flex;
+      justify-content: center;
+      padding: 100px 20px; /* Increased padding for more white space */
+    }
+
+    .welcome-box {
+      background-color: var(--box-bg);
+      border: 1px solid var(--box-border);
+      border-radius: 12px; /* Softer corners */
+      max-width: 400px; /* Wider for readability */
+      width: 100%;
+      padding: 30px; /* More padding for a spacious feel */
+      box-shadow: 0 4px 15px var(--box-shadow); /* Softer shadow */
+      text-align: center;
+      margin-top: 50px; /* Adjusted spacing */
+    }
+
+    .welcome-box h2 {
+      font-size: 32px;
+      font-weight: 600;
+      margin-bottom: 15px;
+    }
+
+    .welcome-box p {
+      font-size: 16px;
+      margin-bottom: 20px;
+      color: #6b7280; /* Subtle gray for secondary text */
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 28px;
+      font-size: 1rem;
+      font-weight: 600;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+      border: none;
+      cursor: pointer;
+      min-width: 140px;
+    }
+
+    .btn-primary {
+      background-color: var(--primary-blue);
+      color: white;
+      box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3);
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-blue-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(30, 58, 138, 0.4);
+      color: white;
+    }
+
+    .btn-secondary {
+      background-color: transparent;
+      color: white;
+      border: 2px solid white;
+    }
+
+    .btn-secondary:hover {
+      background-color: white;
+      color: var(--primary-blue);
+      transform: translateY(-2px);
+    }
+
+    .btn-outline {
+      background-color: transparent;
+      color: var(--primary-blue);
+      border: 2px solid var(--primary-blue);
+    }
+
+    .btn-outline:hover {
+      background-color: var(--primary-blue);
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    @media (max-width: 768px) {
+      .navbar {
+        flex-direction: column;
+        padding: 10px;
+      }
+
+      .navbar > div {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-top: 10px;
+      }
+
+      .navbar a {
+        margin: 5px 8px;
+      }
+
+      .settings-dropdown {
+        margin-right: 0;
+        margin-top: 10px;
+      }
+
+      .settings-menu {
+        right: auto;
+        left: 0;
+        min-width: 160px;
+      }
+
+      .hero-section {
+        height: 400px;
+      }
+
+      .hero-section h1 {
+        font-size: 36px;
+        margin-bottom: 15px;
+      }
+
+      .welcome-box {
+        margin-top: 30px;
+        padding: 20px;
+      }
+
+      .welcome-box h2 {
+        font-size: 28px;
+      }
+    }
+
+    /* Statistics Section */
+    .stats-section {
+      background-color: var(--background-secondary);
+      padding: 100px 0;
+      position: relative;
+    }
+
+    .stats-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .stats-container-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 40px;
+      margin-top: 60px;
+    }
+
+    .stat-item {
+      text-align: center;
+      padding: 40px 30px;
+      background: var(--background-color);
+      border-radius: 16px;
+      box-shadow: 0 4px 20px var(--shadow-light);
+      border: 1px solid var(--border-color);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .stat-item:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 40px var(--shadow-medium);
+    }
+
+    .stat-number {
+      font-size: 3rem;
+      font-weight: 800;
+      color: var(--primary-blue);
+      margin-bottom: 12px;
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Features Section */
+    .features-section {
+      padding: 120px 0;
+      background-color: var(--background-color);
+      overflow: visible;
+    }
+
+    .section-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+    }
+
+    .section-subtitle {
+      font-size: 1.125rem;
+      color: var(--text-secondary);
+      margin-bottom: 60px;
+      font-weight: 400;
+      line-height: 1.6;
+      max-width: 600px;
+    }
+
+    .text-center {
+      text-align: center;
+    }
+
+
+
+    .text-center .section-subtitle {
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .features-container {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+      margin-top: 80px;
+    }
+
+    .features-row {
+      display: flex;
+      gap: 40px;
+      justify-content: space-between;
+      align-items: stretch;
+    }
+
+    .feature-card {
+      background-color: var(--background-color);
+      padding: 48px 32px;
+      border-radius: 16px;
+      text-align: left;
+      border: 1px solid var(--border-color);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: visible;
+      flex: 1;
+      min-width: 300px;
+      min-height: 280px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary-blue), var(--secondary-gold));
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+    }
+
+    .feature-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .feature-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px var(--shadow-medium);
+      border-color: var(--primary-blue-light);
+    }
+
+    .feature-icon {
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg, var(--primary-blue), var(--primary-blue-light));
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      margin-bottom: 24px;
+      color: white;
+    }
+
+    .feature-card h3 {
+      font-size: 1.375rem;
+      font-weight: 700;
+      margin-bottom: 18px;
+      color: var(--text-primary);
+      line-height: 1.4;
+      word-wrap: break-word;
+      hyphens: auto;
+    }
+
+    .feature-card p {
+      color: var(--text-secondary);
+      line-height: 1.7;
+      font-size: 1rem;
+      word-wrap: break-word;
+      hyphens: auto;
+      flex-grow: 1;
+    }
+
+    /* Why Choose InsureMyWay Section */
+    .why-choose-section {
+      padding: 120px 0;
+      background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
+      color: white;
+      position: relative;
+    }
+
+    .why-choose-section .section-title {
+      color: white;
+    }
+
+    .why-choose-section .section-subtitle {
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .why-choose-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .why-choose-container-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 40px;
+      margin-top: 60px;
+    }
+
+    .why-choose-item {
+      text-align: center;
+      padding: 40px 30px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+      flex: 1;
+      min-width: 250px;
+    }
+
+    .why-choose-item:hover {
+      transform: translateY(-8px);
+      background: rgba(255, 255, 255, 0.15);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    .why-choose-icon {
+      font-size: 48px;
+      margin-bottom: 20px;
+      display: block;
+    }
+
+    .why-choose-label {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: white;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      line-height: 1.3;
+      margin-bottom: 8px;
+    }
+
+    .why-choose-description {
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.8);
+      margin-bottom: 16px;
+      line-height: 1.4;
+    }
+
+    .why-choose-stat {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 800;
+      color: white;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .stat-suffix {
+      font-size: 0.875rem;
+      color: rgba(255, 255, 255, 0.9);
+      font-weight: 600;
+    }
+
+    /* Products Highlight Section */
+    .products-highlight-section {
+      padding: 120px 0;
+      background-color: var(--background-secondary);
+      position: relative;
+    }
+
+    .products-highlight-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .products-highlight-container-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 40px;
+      margin-top: 60px;
+    }
+
+    .product-highlight-item {
+      text-align: center;
+      padding: 40px 30px;
+      background: var(--background-color);
+      border-radius: 16px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s ease;
+      flex: 1;
+      min-width: 250px;
+    }
+
+    .product-highlight-item:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      border-color: var(--primary-blue-light);
+    }
+
+    .product-highlight-icon {
+      font-size: 48px;
+      margin-bottom: 20px;
+      display: block;
+    }
+
+    .product-highlight-label {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.3;
+      margin-bottom: 12px;
+    }
+
+    .product-price {
+      font-size: 1rem;
+      color: var(--primary-blue);
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+
+    .price-amount {
+      font-size: 1.5rem;
+      font-weight: 800;
+    }
+
+    .product-features {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    .feature-item {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+      line-height: 1.4;
+    }
+
+    .product-action {
+      margin-top: auto;
+    }
+
+    .quick-quote-btn {
+      background: linear-gradient(135deg, var(--primary-blue), var(--primary-blue-dark));
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      width: 100%;
+    }
+
+    .quick-quote-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(30, 58, 138, 0.3);
+    }
+
+    /* Policies Section */
+    .policies-section {
+      padding: 120px 0;
+      background-color: var(--background-secondary);
+    }
+
+    .policies-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 30px;
+      margin-top: 60px;
+      justify-content: space-between;
+    }
+
+    .policy-card {
+      background-color: var(--background-color);
+      border: 2px solid var(--border-color);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: transform 0.3s ease, border-color 0.3s ease;
+      flex: 1;
+      min-width: 300px;
+      max-width: 350px;
+    }
+
+    .policy-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--btn-bg);
+    }
+
+    .policy-header {
+      background: linear-gradient(135deg, var(--primary-blue), var(--primary-blue-light));
+      color: white;
+      padding: 24px;
+      text-align: center;
+    }
+
+    .policy-price {
+      font-size: 2rem;
+      font-weight: 800;
+      margin: 0;
+      letter-spacing: -0.02em;
+    }
+
+    .policy-content {
+      padding: 25px;
+    }
+
+    .policy-content h3 {
+      margin: 0 0 16px 0;
+      font-size: 1.375rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.3;
+    }
+
+    .policy-content p {
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    .policy-features {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .policy-features li {
+      padding: 6px 0;
+      color: var(--text-primary);
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    .policy-footer {
+      padding: 0 25px 25px 25px;
+    }
+
+    .policy-btn {
+      width: 100%;
+      text-align: center;
+      padding: 14px 20px;
+      background-color: var(--primary-blue);
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+    }
+
+    .policy-btn:hover {
+      background-color: var(--primary-blue-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(30, 58, 138, 0.3);
+      color: white;
+    }
+
+    /* Customers Highlight Section */
+    .customers-highlight-section {
+      padding: 120px 0;
+      background: linear-gradient(135deg, var(--secondary-gold) 0%, var(--secondary-gold-light) 100%);
+      color: white;
+      position: relative;
+    }
+
+    .customers-highlight-section .section-title {
+      color: white;
+    }
+
+    .customers-highlight-section .section-subtitle {
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .customers-highlight-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .customers-highlight-container-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 40px;
+      margin-top: 60px;
+    }
+
+    .customer-highlight-item {
+      text-align: center;
+      padding: 40px 30px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+      flex: 1;
+      min-width: 250px;
+    }
+
+    .customer-highlight-item:hover {
+      transform: translateY(-8px);
+      background: rgba(255, 255, 255, 0.15);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    .customer-highlight-icon {
+      font-size: 48px;
+      margin-bottom: 20px;
+      display: block;
+    }
+
+    .customer-highlight-name {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: white;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      line-height: 1.3;
+      margin-bottom: 8px;
+    }
+
+    .customer-highlight-type {
+      font-size: 1rem;
+      color: rgba(255, 255, 255, 0.8);
+      font-weight: 500;
+      margin-bottom: 12px;
+    }
+
+    .customer-rating {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .stars {
+      font-size: 1rem;
+    }
+
+    .rating-text {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: white;
+    }
+
+    .customer-quote {
+      font-size: 0.875rem;
+      color: rgba(255, 255, 255, 0.9);
+      font-style: italic;
+      margin-bottom: 16px;
+      line-height: 1.4;
+    }
+
+    .read-more-btn {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .read-more-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-1px);
+    }
+
+    /* Modal Styles */
+    .modal {
+      position: fixed;
+      z-index: 10000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(5px);
+      animation: fadeIn 0.3s ease;
+    }
+
+    .modal-content {
+      background-color: var(--background-color);
+      margin: 5% auto;
+      padding: 30px;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 600px;
+      position: relative;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      animation: slideInUp 0.3s ease;
+    }
+
+    @keyframes slideInUp {
+      from {
+        transform: translateY(50px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .close-modal {
+      color: var(--text-secondary);
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      transition: color 0.3s ease;
+    }
+
+    .close-modal:hover {
+      color: var(--primary-blue);
+    }
+
+    /* CTA Section */
+    .cta-section {
+      background: linear-gradient(135deg, var(--btn-bg) 0%, var(--btn-hover-bg) 100%);
+      padding: 80px 0;
+      text-align: center;
+      color: white;
+    }
+
+    .cta-content h2 {
+      font-size: 36px;
+      font-weight: 700;
+      margin-bottom: 15px;
+    }
+
+    .cta-content p {
+      font-size: 18px;
+      margin-bottom: 30px;
+      opacity: 0.9;
+    }
+
+    .cta-btn {
+      background-color: white;
+      color: var(--primary-blue);
+      padding: 16px 32px;
+      font-size: 1.125rem;
+      font-weight: 700;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid white;
+    }
+
+    .cta-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+      background-color: var(--background-color);
+      color: var(--primary-blue);
+    }
+
+    @media (max-width: 768px) {
+      .navbar .container {
+        flex-direction: column;
+        gap: 15px;
+        padding: 15px 20px;
+      }
+
+      .navbar-nav {
+        gap: 12px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .navbar-search-wrapper {
+        min-width: 180px;
+      }
+
+      .navbar-search-input {
+        min-width: 100px;
+        font-size: 0.8rem;
+      }
+
+      .navbar .btn {
+        padding: 8px 14px;
+        font-size: 0.8rem;
+        gap: 4px;
+      }
+
+      .stats-container-inner {
+        flex-direction: column;
+        gap: 30px;
+      }
+
+      .why-choose-container-inner {
+        flex-direction: column;
+        gap: 30px;
+      }
+
+      .products-highlight-container-inner {
+        flex-direction: column;
+        gap: 30px;
+      }
+
+      .customers-highlight-container-inner {
+        flex-direction: column;
+        gap: 30px;
+      }
+
+      .features-row {
+        flex-direction: column;
+        gap: 30px;
+      }
+
+      .policies-container {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .policy-card {
+        max-width: 100%;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .navbar-brand img {
+        height: 60px;
+        width: 60px;
+        border-radius: 12px;
+        border-width: 3px;
+        padding: 3px;
+      }
+    }
+
+    @media (max-width: 500px) {
+      .navbar-brand {
+        gap: 12px;
+      }
+
+      .navbar-brand img {
+        height: 50px;
+        width: 50px;
+        border-radius: 10px;
+        border-width: 2px;
+        padding: 2px;
+      }
+
+      .navbar-brand-text {
+        font-size: 1.25rem;
+      }
+
+      .navbar-nav {
+        gap: 12px;
+      }
+
+      .navbar-search-wrapper {
+        min-width: 150px;
+      }
+
+      .navbar-search-input {
+        min-width: 80px;
+        font-size: 0.75rem;
+        padding: 6px 30px 6px 25px;
+      }
+
+      .navbar-search-btn {
+        padding: 6px 10px;
+        min-width: 28px;
+      }
+
+      /* Language dropdown mobile styles */
+      .language-button {
+        padding: 6px 8px;
+        min-width: 60px;
+        font-size: 0.8rem;
+      }
+
+      .language-menu {
+        min-width: 200px;
+        right: -20px;
+      }
+
+      .language-option {
+        padding: 8px 12px;
+        font-size: 0.8rem;
+      }
+
+      .language-flag {
+        font-size: 1rem;
+      }
+
+      .language-button {
+        padding: 6px 8px;
+        min-width: 60px;
+        font-size: 0.8rem;
+      }
+
+      .language-menu {
+        min-width: 200px;
+        right: -20px;
+      }
+
+      .language-option {
+        padding: 8px 12px;
+        font-size: 0.8rem;
+      }
+
+      .language-flag {
+        font-size: 1rem;
+      }
+
+      .navbar .btn {
+        padding: 6px 10px;
+        font-size: 0.75rem;
+        min-width: 70px;
+        gap: 3px;
+      }
+
+      .navbar .btn span:first-child {
+        font-size: 0.9rem;
+      }
+
+      .hero-section h1 {
+        font-size: 2rem;
+      }
+
+      .hero-subtitle {
+        font-size: 1rem;
+      }
+
+      .hero-buttons {
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .stats-container-inner {
+        gap: 20px;
+      }
+
+      .stat-item {
+        padding: 30px 20px;
+      }
+
+      .why-choose-item {
+        padding: 30px 20px;
+        min-width: auto;
+      }
+
+      .why-choose-icon {
+        font-size: 36px;
+        margin-bottom: 15px;
+      }
+
+      .why-choose-label {
+        font-size: 1.125rem;
+      }
+
+      .product-highlight-item {
+        padding: 30px 20px;
+        min-width: auto;
+      }
+
+      .product-highlight-icon {
+        font-size: 36px;
+        margin-bottom: 15px;
+      }
+
+      .product-highlight-label {
+        font-size: 1.125rem;
+      }
+
+      .customer-highlight-item {
+        padding: 30px 20px;
+        min-width: auto;
+      }
+
+      .customer-highlight-icon {
+        font-size: 36px;
+        margin-bottom: 15px;
+      }
+
+      .customer-highlight-name {
+        font-size: 1.125rem;
+        margin-bottom: 6px;
+      }
+
+      .customer-highlight-type {
+        font-size: 0.9rem;
+      }
+
+      .feature-card {
+        padding: 32px 24px;
+        min-width: auto;
+        min-height: 240px;
+        text-align: center;
+      }
+
+      .feature-card h3 {
+        font-size: 1.25rem;
+        margin-bottom: 16px;
+      }
+
+      .feature-card p {
+        font-size: 0.95rem;
+        line-height: 1.6;
+      }
+
+      .section-title {
+        font-size: 2rem;
+      }
+
+      .section-subtitle {
+        font-size: 1rem;
+      }
+    }
+
+    /* Modern Footer Styles */
+    .modern-footer {
+      background: linear-gradient(135deg, var(--primary-blue-dark) 0%, var(--primary-blue) 100%);
+      color: white;
+      margin-top: 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .modern-footer::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+      opacity: 0.3;
+    }
+
+    .footer-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .footer-main {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr 1.5fr;
+      gap: 40px;
+      padding: 60px 0 40px;
+    }
+
+    .footer-section {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .footer-brand {
+      padding-right: 20px;
+    }
+
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .footer-logo img {
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      object-fit: cover;
+    }
+
+    .footer-brand-text {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: white;
+    }
+
+    .footer-description {
+      color: rgba(255, 255, 255, 0.8);
+      line-height: 1.6;
+      margin-bottom: 25px;
+      font-size: 0.95rem;
+    }
+
+    .footer-social {
+      display: flex;
+      gap: 12px;
+    }
+
+    .social-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+
+    .social-link:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .social-icon {
+      font-size: 1.2rem;
+    }
+
+    .footer-title {
+      color: white;
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .footer-title::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 0;
+      width: 30px;
+      height: 2px;
+      background: var(--secondary-gold);
+      border-radius: 1px;
+    }
+
+    .footer-links {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .footer-links li {
+      margin-bottom: 12px;
+    }
+
+    .footer-links a {
+      color: rgba(255, 255, 255, 0.8);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+      display: inline-block;
+    }
+
+    .footer-links a:hover {
+      color: white;
+      transform: translateX(5px);
+    }
+
+    .footer-contact {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .contact-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .contact-icon {
+      font-size: 1.1rem;
+      margin-top: 2px;
+    }
+
+    .contact-details {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .contact-label {
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 0.8rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .contact-details a,
+    .contact-details span {
+      color: rgba(255, 255, 255, 0.9);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.3s ease;
+    }
+
+    .contact-details a:hover {
+      color: white;
+    }
+
+    .footer-bottom {
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 25px 0;
+    }
+
+    .footer-bottom-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .footer-copyright p {
+      color: rgba(255, 255, 255, 0.7);
+      margin: 0;
+      font-size: 0.9rem;
+    }
+
+    .footer-legal {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .footer-legal a {
+      color: rgba(255, 255, 255, 0.7);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.3s ease;
+    }
+
+    .footer-legal a:hover {
+      color: white;
+    }
+
+    /* Responsive Footer */
+    @media (max-width: 1024px) {
+      .footer-main {
+        grid-template-columns: 2fr 1fr 1fr;
+        gap: 30px;
+      }
+
+      .footer-section:nth-child(4),
+      .footer-section:nth-child(5) {
+        grid-column: span 1;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .footer-main {
+        grid-template-columns: 1fr;
+        gap: 40px;
+        padding: 40px 0 30px;
+      }
+
+      .footer-brand {
+        padding-right: 0;
+        text-align: center;
+      }
+
+      .footer-social {
+        justify-content: center;
+      }
+
+      .footer-bottom-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+      }
+
+      .footer-legal {
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .footer-container {
+        padding: 0 15px;
+      }
+
+      .footer-main {
+        padding: 30px 0 20px;
+        gap: 30px;
+      }
+
+      .footer-legal {
+        flex-direction: column;
+        gap: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="container">
+      <div class="navbar-brand">
+        <img src="{{ url_for('static', filename='images/logo_insuremyway.jpg') }}" alt="InsureMyWay Logo">
+      </div>
+      <div class="navbar-nav">
+        {% if not current_user.is_authenticated %}
+        <a href="{{ url_for('login') }}" class="btn btn-outline">
+          <i class="fas fa-sign-in-alt" style="font-size: 1rem;"></i>
+          <span>Login</span>
+        </a>
+        <a href="{{ url_for('signup') }}" class="btn btn-primary">
+          <i class="fas fa-user-plus" style="font-size: 1rem;"></i>
+          <span>Register</span>
+        </a>
+        {% else %}
+        <a href="{{ url_for('dashboard') }}" class="btn btn-primary">Dashboard</a>
+        <a href="{{ url_for('logout') }}" class="btn btn-outline">Logout</a>
+        {% endif %}
+
+        <div class="settings-dropdown">
+          <div class="settings-button" onclick="toggleSettings()">
+            <span>⚙️</span>
+          </div>
+          <div class="settings-menu" id="settingsMenu">
+            <div class="settings-menu-header">Theme Settings</div>
+            <div class="theme-options">
+              <div class="theme-option" onclick="setTheme('light')" id="lightTheme">
+                <span class="theme-icon">☀️</span>
+                <span class="theme-label">Light Mode</span>
+              </div>
+              <div class="theme-option" onclick="setTheme('dark')" id="darkTheme">
+                <span class="theme-icon">🌙</span>
+                <span class="theme-label">Dark Mode</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="hero-section">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="badge-icon">🏆</span>
+        <span class="badge-text">Rated #1 Insurance Provider 2024</span>
+      </div>
+      <h1 data-translate="secure_future">Secure Your Future with Confidence</h1>
+      <p class="hero-subtitle" data-translate="hero_subtitle">Professional insurance solutions designed to protect what matters most. Experience personalized coverage with industry-leading service and competitive rates.</p>
+
+
+
+      <!-- Dynamic Features Showcase -->
+      <div class="hero-features">
+        <div class="hero-feature">
+          <span class="feature-icon">⚡</span>
+          <span class="feature-text">Instant Quotes</span>
+        </div>
+        <div class="hero-feature">
+          <span class="feature-icon">🔒</span>
+          <span class="feature-text">100% Secure</span>
+        </div>
+        <div class="hero-feature">
+          <span class="feature-icon">📞</span>
+          <span class="feature-text">24/7 Support</span>
+        </div>
+      </div>
+
+      <div class="hero-buttons">
+        {% if not current_user.is_authenticated %}
+        <a href="{{ url_for('signup') }}" class="btn btn-primary">
+          <i class="fas fa-user-plus btn-icon" style="font-size: 1rem;"></i>
+          <span data-translate="get_started">Get Started Today</span>
+        </a>
+        <a href="#features" class="btn btn-secondary">
+          <i class="fas fa-info-circle btn-icon" style="font-size: 1rem;"></i>
+          <span data-translate="learn_more">Learn More</span>
+        </a>
+        {% else %}
+        <a href="{{ url_for('dashboard') }}" class="btn btn-primary">
+          <i class="fas fa-tachometer-alt btn-icon" style="font-size: 1rem;"></i>
+          Go to Dashboard
+        </a>
+        <a href="{{ url_for('recommendations') }}" class="btn btn-secondary">
+          <i class="fas fa-bullseye btn-icon" style="font-size: 1rem;"></i>
+          Get Recommendations
+        </a>
+        {% endif %}
+      </div>
+
+      <!-- Live Activity Indicator -->
+      <div class="live-activity">
+        <div class="activity-indicator">
+          <span class="pulse-dot"></span>
+          <span class="activity-text">
+            <span id="live-users">247</span> people are getting quotes right now
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Statistics Section -->
+  <section class="stats-section">
+    <div class="stats-container">
+      <div class="text-center">
+        <h2 class="section-title" data-translate="trusted_by">Trusted by Industry Leaders</h2>
+        <p class="section-subtitle" data-translate="trusted_subtitle">Our commitment to excellence is reflected in our track record</p>
+      </div>
+      <div class="stats-container-inner">
+        <div class="stat-item">
+          <div class="stat-number" id="happy-customers">0</div>
+          <div class="stat-label" data-translate="satisfied_clients">Satisfied Clients</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" id="policies-sold">0</div>
+          <div class="stat-label" data-translate="policies_active">Policies Active</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" id="claims-processed">0</div>
+          <div class="stat-label" data-translate="claims_processed">Claims Processed</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" id="years-experience">0</div>
+          <div class="stat-label">Years Experience</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why Choose InsureMyWay Section -->
+  <section class="why-choose-section">
+    <div class="why-choose-container">
+      <div class="text-center">
+        <h2 class="section-title" data-translate="why_choose">Why Choose InsureMyWay?</h2>
+        <p class="section-subtitle" data-translate="why_choose_subtitle">Discover what makes us the preferred choice for insurance protection</p>
+      </div>
+      <div class="why-choose-container-inner">
+        <div class="why-choose-item" data-feature="recommendation">
+          <div class="why-choose-icon">🎯</div>
+          <div class="why-choose-label" data-translate="personal_recommendation">Personal Recommendation</div>
+          <div class="why-choose-description" data-translate="personal_recommendation_desc">AI-powered analysis of your profile</div>
+          <div class="why-choose-stat">
+            <span class="stat-number" data-target="98">0</span>
+            <span class="stat-suffix">% Accuracy</span>
+          </div>
+        </div>
+        <div class="why-choose-item" data-feature="coverage">
+          <div class="why-choose-icon">🛡️</div>
+          <div class="why-choose-label" data-translate="comprehensive_coverage">Comprehensive Coverage</div>
+          <div class="why-choose-description" data-translate="comprehensive_coverage_desc">All-in-one protection solutions</div>
+          <div class="why-choose-stat">
+            <span class="stat-number" data-target="50">0</span>
+            <span class="stat-suffix">+ Plans</span>
+          </div>
+        </div>
+        <div class="why-choose-item" data-feature="pricing">
+          <div class="why-choose-icon">💰</div>
+          <div class="why-choose-label" data-translate="competitive_price">Competitive Price</div>
+          <div class="why-choose-description" data-translate="competitive_price_desc">Best value in the market</div>
+          <div class="why-choose-stat">
+            <span class="stat-number" data-target="30">0</span>
+            <span class="stat-suffix">% Savings</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Our Insurance Products Section -->
+  <section class="products-highlight-section">
+    <div class="products-highlight-container">
+      <div class="text-center">
+        <h2 class="section-title" data-translate="our_products">Our Insurance Products</h2>
+        <p class="section-subtitle" data-translate="products_subtitle">Choose from our comprehensive range of insurance plans designed to fit your needs</p>
+      </div>
+      <div class="products-highlight-container-inner">
+        <div class="product-highlight-item" data-product="health">
+          <div class="product-highlight-icon">🏥</div>
+          <div class="product-highlight-label" data-translate="health_insurance">Health Insurance</div>
+          <div class="product-price">Starting at <span class="price-amount">65,000 FRW</span>/month</div>
+          <div class="product-features">
+            <div class="feature-item">✓ Medical Coverage</div>
+            <div class="feature-item">✓ Emergency Care</div>
+            <div class="feature-item">✓ Prescription Drugs</div>
+          </div>
+          <div class="product-action">
+            <button class="quick-quote-btn" onclick="getQuickQuote('health')">
+              <span class="btn-icon">⚡</span>
+              Quick Quote
+            </button>
+          </div>
+        </div>
+        <div class="product-highlight-item" data-product="auto">
+          <div class="product-highlight-icon">🚗</div>
+          <div class="product-highlight-label" data-translate="auto_insurance">Car Insurance</div>
+          <div class="product-price">Starting at <span class="price-amount">39,000 FRW</span>/month</div>
+          <div class="product-features">
+            <div class="feature-item">✓ Collision Coverage</div>
+            <div class="feature-item">✓ Liability Protection</div>
+            <div class="feature-item">✓ Roadside Assistance</div>
+          </div>
+          <div class="product-action">
+            <button class="quick-quote-btn" onclick="getQuickQuote('auto')">
+              <span class="btn-icon">⚡</span>
+              Quick Quote
+            </button>
+          </div>
+        </div>
+        <div class="product-highlight-item" data-product="home">
+          <div class="product-highlight-icon">🏠</div>
+          <div class="product-highlight-label" data-translate="home_insurance">Home Insurance</div>
+          <div class="product-price">Starting at <span class="price-amount">52,000 FRW</span>/month</div>
+          <div class="product-features">
+            <div class="feature-item">✓ Property Protection</div>
+            <div class="feature-item">✓ Personal Belongings</div>
+            <div class="feature-item">✓ Liability Coverage</div>
+          </div>
+          <div class="product-action">
+            <button class="quick-quote-btn" onclick="getQuickQuote('home')">
+              <span class="btn-icon">⚡</span>
+              Quick Quote
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- What Our Customers Say Section -->
+  <section class="customers-highlight-section">
+    <div class="customers-highlight-container">
+      <div class="text-center">
+        <h2 class="section-title">What Our Customers Say</h2>
+        <p class="section-subtitle">Real stories from satisfied customers who trust InsureMyWay</p>
+      </div>
+      <div class="customers-highlight-container-inner">
+        <div class="customer-highlight-item" data-testimonial="kevin">
+          <div class="customer-highlight-icon">�‍💼</div>
+          <div class="customer-highlight-name">ISHIMWE Kevin</div>
+          <div class="customer-highlight-type">Health Insurance</div>
+          <div class="customer-rating">
+            <span class="stars">⭐⭐⭐⭐⭐</span>
+            <span class="rating-text">5.0</span>
+          </div>
+          <div class="customer-quote">"Saved me 260,000 FRW/month!"</div>
+          <button class="read-more-btn" onclick="showTestimonial('kevin')">
+            Read Full Story
+          </button>
+        </div>
+        <div class="customer-highlight-item" data-testimonial="elise">
+          <div class="customer-highlight-icon">�‍💻</div>
+          <div class="customer-highlight-name">TUYISENGE Elise</div>
+          <div class="customer-highlight-type">Auto Insurance</div>
+          <div class="customer-rating">
+            <span class="stars">⭐⭐⭐⭐⭐</span>
+            <span class="rating-text">5.0</span>
+          </div>
+          <div class="customer-quote">"Claims processed in 24 hours!"</div>
+          <button class="read-more-btn" onclick="showTestimonial('elise')">
+            Read Full Story
+          </button>
+        </div>
+        <div class="customer-highlight-item" data-testimonial="samuel">
+          <div class="customer-highlight-icon">�‍🏫</div>
+          <div class="customer-highlight-name">BYIRINGIRO Samuel</div>
+          <div class="customer-highlight-type">Home Insurance</div>
+          <div class="customer-rating">
+            <span class="stars">⭐⭐⭐⭐⭐</span>
+            <span class="rating-text">5.0</span>
+          </div>
+          <div class="customer-quote">"Excellent customer service!"</div>
+          <button class="read-more-btn" onclick="showTestimonial('samuel')">
+            Read Full Story
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <div class="cta-section">
+    <div class="container">
+      <div class="cta-content">
+        <h2>Ready to Protect Your Future?</h2>
+        <p>Join thousands of satisfied customers who trust InsureMyWay for their insurance needs.</p>
+        {% if not current_user.is_authenticated %}
+        <a href="{{ url_for('signup') }}" class="btn cta-btn">Get Started Now</a>
+        {% else %}
+        <a href="{{ url_for('recommendations') }}" class="btn cta-btn">Get Personalized Recommendations</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Dynamic Content Modals -->
+  <div id="testimonial-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeModal()">&times;</span>
+      <div id="testimonial-content">
+        <!-- Dynamic testimonial content will be inserted here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Quote Modal -->
+  <div id="quote-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeModal()">&times;</span>
+      <div id="quote-content">
+        <!-- Dynamic quote content will be inserted here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Modern Footer -->
+  <footer class="modern-footer">
+    <div class="footer-container">
+      <!-- Main Footer Content -->
+      <div class="footer-main">
+        <div class="footer-section footer-brand">
+          <div class="footer-logo">
+            <img src="{{ url_for('static', filename='images/logo_insuremyway.jpg') }}" alt="InsureMyWay Logo">
+            <span class="footer-brand-text">InsureMyWay</span>
+          </div>
+          <p class="footer-description">
+            Your trusted partner in comprehensive insurance solutions. Protecting what matters most with personalized coverage and exceptional service.
+          </p>
+          <div class="footer-social">
+            <a href="https://facebook.com/insuremyway" class="social-link" aria-label="Facebook" target="_blank">
+              <i class="fab fa-facebook-f social-icon"></i>
+            </a>
+            <a href="https://twitter.com/insuremyway" class="social-link" aria-label="Twitter/X" target="_blank">
+              <i class="fab fa-x-twitter social-icon"></i>
+            </a>
+            <a href="https://instagram.com/insuremyway" class="social-link" aria-label="Instagram" target="_blank">
+              <i class="fab fa-instagram social-icon"></i>
+            </a>
+            <a href="https://wa.me/250787592615" class="social-link" aria-label="WhatsApp" target="_blank">
+              <i class="fab fa-whatsapp social-icon"></i>
+            </a>
+            <a href="https://linkedin.com/company/insuremyway" class="social-link" aria-label="LinkedIn" target="_blank">
+              <i class="fab fa-linkedin-in social-icon"></i>
+            </a>
+          </div>
+        </div>
+
+        <div class="footer-section">
+          <h3 class="footer-title">Insurance Products</h3>
+          <ul class="footer-links">
+            <li><a href="{{ url_for('products') }}">Health Insurance</a></li>
+            <li><a href="{{ url_for('products') }}">Auto Insurance</a></li>
+            <li><a href="{{ url_for('products') }}">Home Insurance</a></li>
+            <li><a href="{{ url_for('products') }}">Life Insurance</a></li>
+            <li><a href="{{ url_for('products') }}">Business Insurance</a></li>
+            <li><a href="{{ url_for('products') }}">Travel Insurance</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h3 class="footer-title">Company</h3>
+          <ul class="footer-links">
+            <li><a href="#about">About Us</a></li>
+            <li><a href="#careers">Careers</a></li>
+            <li><a href="#news">News & Updates</a></li>
+            <li><a href="#investors">Investors</a></li>
+            <li><a href="#partners">Partners</a></li>
+            <li><a href="#testimonials">Customer Stories</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h3 class="footer-title">Support & Help</h3>
+          <ul class="footer-links">
+            <li><a href="{{ url_for('chat') }}">Help Center</a></li>
+            <li><a href="#faq">FAQ</a></li>
+            <li><a href="#claims">File a Claim</a></li>
+            <li><a href="#contact">Contact Support</a></li>
+            <li><a href="#live-chat">Live Chat</a></li>
+            <li><a href="#documentation">Documentation</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h3 class="footer-title">Contact Info</h3>
+          <div class="footer-contact">
+            <div class="contact-item">
+              <span class="contact-icon">📞</span>
+              <div class="contact-details">
+                <span class="contact-label">Phone</span>
+                <a href="tel:+250787592615">+250 787 592 615</a>
+              </div>
+            </div>
+            <div class="contact-item">
+              <span class="contact-icon">✉️</span>
+              <div class="contact-details">
+                <span class="contact-label">Email</span>
+                <a href="mailto:support@insuremyway.com">support@insuremyway.com</a>
+              </div>
+            </div>
+            <div class="contact-item">
+              <span class="contact-icon">📍</span>
+              <div class="contact-details">
+                <span class="contact-label">Address</span>
+                <span>KG 15 Ave, Kigali, Rwanda</span>
+              </div>
+            </div>
+            <div class="contact-item">
+              <span class="contact-icon">🕒</span>
+              <div class="contact-details">
+                <span class="contact-label">Hours</span>
+                <span>24/7 Support Available</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer Bottom -->
+      <div class="footer-bottom">
+        <div class="footer-bottom-content">
+          <div class="footer-copyright">
+            <p>&copy; 2024 InsureMyWay. All rights reserved. | Licensed Insurance Provider in Rwanda</p>
+          </div>
+          <div class="footer-legal">
+            <a href="#privacy">Privacy Policy</a>
+            <a href="#terms">Terms & Conditions</a>
+            <a href="#cookies">Cookie Policy</a>
+            <a href="#accessibility">Accessibility</a>
+            <a href="#security">Security</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Theme Management
+    const body = document.body;
+    const settingsMenu = document.getElementById('settingsMenu');
+    const lightThemeOption = document.getElementById('lightTheme');
+    const darkThemeOption = document.getElementById('darkTheme');
+    const currentThemeIcon = document.getElementById('currentThemeIcon');
+
+    // Initialize theme
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    setTheme(savedTheme);
+
+    function toggleSettings() {
+      settingsMenu.classList.toggle('show');
+    }
+
+    function setTheme(theme) {
+      // Apply theme to current page
+      body.setAttribute('data-theme', theme);
+      localStorage.setItem('theme', theme);
+
+      // Update active state
+      lightThemeOption.classList.toggle('active', theme === 'light');
+      darkThemeOption.classList.toggle('active', theme === 'dark');
+
+      // Update current theme icon
+      currentThemeIcon.textContent = theme === 'dark' ? '🌙' : '☀️';
+
+      // Close settings menu
+      settingsMenu.classList.remove('show');
+
+      // Show confirmation message
+      showThemeChangeMessage(theme);
+    }
+
+    function showThemeChangeMessage(theme) {
+      const message = document.createElement('div');
+      message.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: var(--primary-blue);
+        color: white;
+        padding: 12px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        z-index: 10000;
+        font-weight: 500;
+        animation: slideIn 0.3s ease;
+      `;
+      message.textContent = `Switched to ${theme === 'dark' ? 'Dark' : 'Light'} Mode`;
+
+      document.body.appendChild(message);
+
+      setTimeout(() => {
+        message.style.animation = 'slideOut 0.3s ease forwards';
+        setTimeout(() => message.remove(), 300);
+      }, 2000);
+    }
+
+    // Close settings menu when clicking outside
+    document.addEventListener('click', function(event) {
+      const settingsDropdown = document.querySelector('.settings-dropdown');
+      if (!settingsDropdown.contains(event.target)) {
+        settingsMenu.classList.remove('show');
+      }
+    });
+
+    // Animated Counter for Statistics
+    function animateCounter(element, target, duration = 2000) {
+      let start = 0;
+      const increment = target / (duration / 16);
+
+      function updateCounter() {
+        start += increment;
+        if (start < target) {
+          element.textContent = Math.floor(start).toLocaleString();
+          requestAnimationFrame(updateCounter);
+        } else {
+          element.textContent = target.toLocaleString();
+        }
+      }
+      updateCounter();
+    }
+
+    // Dynamic Live Users Counter
+    function updateLiveUsers() {
+      const liveUsersElement = document.getElementById('live-users');
+      if (liveUsersElement) {
+        const baseCount = 247;
+        const variation = Math.floor(Math.random() * 20) - 10; // ±10 variation
+        const newCount = Math.max(200, baseCount + variation);
+        liveUsersElement.textContent = newCount;
+      }
+    }
+
+    // Update live users every 5 seconds
+    setInterval(updateLiveUsers, 5000);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // Quick Quote Function
+    function getQuickQuote(productType) {
+      // Show loading state
+      const button = event.target.closest('.quick-quote-btn');
+      const originalText = button.innerHTML;
+      button.innerHTML = '<span class="btn-icon">⏳</span>Loading...';
+      button.disabled = true;
+
+      // Simulate API call
+      setTimeout(() => {
+        button.innerHTML = originalText;
+        button.disabled = false;
+
+        // Show quote modal
+        const quotes = {
+          health: { price: '58,500-84,500 FRW/month', features: ['Medical Coverage', 'Emergency Care', 'Prescription Drugs', 'Preventive Care'] },
+          auto: { price: '32,500-52,000 FRW/month', features: ['Collision Coverage', 'Liability Protection', 'Roadside Assistance', 'Rental Car Coverage'] },
+          home: { price: '45,500-71,500 FRW/month', features: ['Property Protection', 'Personal Belongings', 'Liability Coverage', 'Natural Disaster Protection'] }
+        };
+
+        const quote = quotes[productType];
+        const productName = productType.charAt(0).toUpperCase() + productType.slice(1);
+
+        document.getElementById('quote-content').innerHTML = `
+          <h2>🎯 Quick Quote - ${productName} Insurance</h2>
+          <div style="text-align: center; margin: 20px 0;">
+            <div style="font-size: 2rem; font-weight: 800; color: var(--primary-blue); margin-bottom: 10px;">
+              ${quote.price}
+            </div>
+            <p style="color: var(--text-secondary); margin-bottom: 20px;">Estimated monthly premium</p>
+          </div>
+          <h3>✅ What's Included:</h3>
+          <ul style="margin: 15px 0; padding-left: 20px;">
+            ${quote.features.map(feature => `<li style="margin: 8px 0; color: var(--text-secondary);">${feature}</li>`).join('')}
+          </ul>
+          <div style="text-align: center; margin-top: 25px;">
+            <a href="/signup" class="btn btn-primary" style="text-decoration: none;">
+              Get Detailed Quote
+            </a>
+          </div>
+        `;
+
+        document.getElementById('quote-modal').style.display = 'block';
+      }, 1500);
+    }
+
+    // Testimonial Modal Function
+    function showTestimonial(customer) {
+      const testimonials = {
+        kevin: {
+          name: 'ISHIMWE Kevin',
+          type: 'Health Insurance Customer',
+          quote: 'InsureMyWay completely transformed my insurance experience. Their AI-powered recommendations found me a plan that saved me 260,000 FRW per month while providing better coverage than my previous policy. The personalized approach made me feel like they truly understood my needs.',
+          rating: 5,
+          icon: '�‍💼',
+          savings: '260,000 FRW/month saved'
+        },
+        elise: {
+          name: 'TUYISENGE Elise',
+          type: 'Auto Insurance Customer',
+          quote: 'When I had a car accident, I was dreading the claims process. But InsureMyWay surprised me - they processed my claim in just 24 hours! The customer service was exceptional, and they handled everything seamlessly. I couldn\'t be happier with their service.',
+          rating: 5,
+          icon: '�‍💻',
+          savings: 'Claim processed in 24 hours'
+        },
+        samuel: {
+          name: 'BYIRINGIRO Samuel',
+          type: 'Home Insurance Customer',
+          quote: 'The customer service at InsureMyWay is outstanding. They took the time to explain every aspect of my home insurance policy and helped me understand exactly what I was covered for. Their competitive rates and excellent service make them my top recommendation.',
+          rating: 5,
+          icon: '�‍🏫',
+          savings: 'Excellent customer service'
+        }
+      };
+
+      const testimonial = testimonials[customer];
+      if (testimonial) {
+        document.getElementById('testimonial-content').innerHTML = `
+          <div style="text-align: center; margin-bottom: 25px;">
+            <div style="font-size: 4rem; margin-bottom: 15px;">${testimonial.icon}</div>
+            <h2 style="margin-bottom: 5px; color: var(--text-primary);">${testimonial.name}</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 10px;">${testimonial.type}</p>
+            <div style="color: var(--primary-blue); font-weight: 600; font-size: 1.1rem;">
+              ${testimonial.savings}
+            </div>
+          </div>
+          <div style="background: var(--background-secondary); padding: 20px; border-radius: 12px; margin: 20px 0;">
+            <p style="font-style: italic; font-size: 1.1rem; line-height: 1.6; color: var(--text-primary); margin: 0;">
+              "${testimonial.quote}"
+            </p>
+          </div>
+          <div style="text-align: center; margin-top: 20px;">
+            <div style="font-size: 1.5rem; margin-bottom: 10px;">
+              ${'⭐'.repeat(testimonial.rating)}
+            </div>
+            <p style="color: var(--text-secondary); margin: 0;">Verified Customer Review</p>
+          </div>
+        `;
+
+        document.getElementById('testimonial-modal').style.display = 'block';
+      }
+    }
+
+    // Close Modal Function
+    function closeModal() {
+      document.getElementById('testimonial-modal').style.display = 'none';
+      document.getElementById('quote-modal').style.display = 'none';
+    }
+
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+      const testimonialModal = document.getElementById('testimonial-modal');
+      const quoteModal = document.getElementById('quote-modal');
+      if (event.target === testimonialModal) {
+        testimonialModal.style.display = 'none';
+      }
+      if (event.target === quoteModal) {
+        quoteModal.style.display = 'none';
+      }
+    }
+
+    // Animate Why Choose Stats
+    function animateWhyChooseStats() {
+      const statNumbers = document.querySelectorAll('.why-choose-item .stat-number');
+      statNumbers.forEach(element => {
+        const target = parseInt(element.getAttribute('data-target'));
+        animateCounter(element, target, 1500);
+      });
+    }
+
+    // Intersection Observer for triggering animations
+    const observerOptions = {
+      threshold: 0.5,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          // Animate statistics when they come into view
+          if (entry.target.classList.contains('stats-section')) {
+            animateCounter(document.getElementById('happy-customers'), 15000);
+            animateCounter(document.getElementById('policies-sold'), 50000);
+            animateCounter(document.getElementById('claims-processed'), 25000);
+            animateCounter(document.getElementById('years-experience'), 15);
+          }
+
+          // Animate Why Choose stats
+          if (entry.target.classList.contains('why-choose-section')) {
+            animateWhyChooseStats();
+          }
+
+          // Add fade-in animation to feature cards
+          if (entry.target.classList.contains('feature-card')) {
+            entry.target.style.opacity = '0';
+            entry.target.style.transform = 'translateY(30px)';
+            entry.target.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+
+            setTimeout(() => {
+              entry.target.style.opacity = '1';
+              entry.target.style.transform = 'translateY(0)';
+            }, 100);
+          }
+
+          // Animate product cards
+          if (entry.target.classList.contains('product-highlight-item')) {
+            entry.target.style.opacity = '0';
+            entry.target.style.transform = 'translateY(30px)';
+            entry.target.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+
+            setTimeout(() => {
+              entry.target.style.opacity = '1';
+              entry.target.style.transform = 'translateY(0)';
+            }, 100);
+          }
+
+          // Animate customer cards
+          if (entry.target.classList.contains('customer-highlight-item')) {
+            entry.target.style.opacity = '0';
+            entry.target.style.transform = 'translateY(30px)';
+            entry.target.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+
+            setTimeout(() => {
+              entry.target.style.opacity = '1';
+              entry.target.style.transform = 'translateY(0)';
+            }, 100);
+          }
+        }
+      });
+    }, observerOptions);
+
+    // Observe elements when DOM is loaded
+    document.addEventListener('DOMContentLoaded', () => {
+      // Observe stats section
+      const statsSection = document.querySelector('.stats-section');
+      if (statsSection) observer.observe(statsSection);
+
+      // Observe why choose section
+      const whyChooseSection = document.querySelector('.why-choose-section');
+      if (whyChooseSection) observer.observe(whyChooseSection);
+
+      // Observe feature cards
+      const featureCards = document.querySelectorAll('.feature-card');
+      featureCards.forEach(card => observer.observe(card));
+
+      // Observe product cards
+      const productCards = document.querySelectorAll('.product-highlight-item');
+      productCards.forEach(card => observer.observe(card));
+
+      // Observe customer cards
+      const customerCards = document.querySelectorAll('.customer-highlight-item');
+      customerCards.forEach(card => observer.observe(card));
+
+      // Initialize live users counter
+      updateLiveUsers();
+    });
+
+
+
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+
+    // Add floating animation to feature icons
+    document.addEventListener('DOMContentLoaded', () => {
+      const featureIcons = document.querySelectorAll('.feature-icon');
+      featureIcons.forEach((icon, index) => {
+        icon.style.animation = `float 3s ease-in-out infinite ${index * 0.5}s`;
+      });
+    });
+
+    // CSS for floating animation (added via JavaScript)
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+      }
+    `;
+    document.head.appendChild(style);
+  </script>
+</body>
+</html>
