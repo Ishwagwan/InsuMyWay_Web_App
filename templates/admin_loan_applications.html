@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan Applications Management - InsureMyWay Admin</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 600;
+        }
+
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.3);
+            color: white;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card .icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .stat-card.total .icon { color: #3498db; }
+        .stat-card.pending .icon { color: #f39c12; }
+        .stat-card.approved .icon { color: #27ae60; }
+        .stat-card.rejected .icon { color: #e74c3c; }
+
+        .stat-card .number {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-card .label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .applications-section {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        .section-header {
+            background: #f8f9fa;
+            padding: 20px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .section-header h2 {
+            color: #333;
+            font-size: 1.5rem;
+        }
+
+        .applications-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .applications-table th,
+        .applications-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .applications-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .applications-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-approved {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-rejected {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-approve {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-approve:hover {
+            background: #219a52;
+        }
+
+        .btn-reject {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-reject:hover {
+            background: #c0392b;
+        }
+
+        .btn-view {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-view:hover {
+            background: #2980b9;
+        }
+
+        .no-applications {
+            text-align: center;
+            padding: 50px;
+            color: #666;
+        }
+
+        .no-applications i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: #ddd;
+        }
+
+        .loan-history-score {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .score-good {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .score-insufficient {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .score-poor {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .applications-table {
+                font-size: 0.8rem;
+            }
+
+            .applications-table th,
+            .applications-table td {
+                padding: 10px 8px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <h1><i class="fas fa-file-invoice-dollar"></i> Loan Applications Management</h1>
+            <a href="{{ url_for('admin') }}" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Back to Admin Panel
+            </a>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Statistics Cards -->
+        <div class="stats-grid">
+            <div class="stat-card total">
+                <div class="icon"><i class="fas fa-file-alt"></i></div>
+                <div class="number">{{ stats.total }}</div>
+                <div class="label">Total Applications</div>
+            </div>
+            <div class="stat-card pending">
+                <div class="icon"><i class="fas fa-clock"></i></div>
+                <div class="number">{{ stats.pending }}</div>
+                <div class="label">Pending Review</div>
+            </div>
+            <div class="stat-card approved">
+                <div class="icon"><i class="fas fa-check-circle"></i></div>
+                <div class="number">{{ stats.approved }}</div>
+                <div class="label">Approved</div>
+            </div>
+            <div class="stat-card rejected">
+                <div class="icon"><i class="fas fa-times-circle"></i></div>
+                <div class="number">{{ stats.rejected }}</div>
+                <div class="label">Rejected</div>
+            </div>
+        </div>
+
+        <!-- Applications Table -->
+        <div class="applications-section">
+            <div class="section-header">
+                <h2><i class="fas fa-list"></i> Recent Applications</h2>
+            </div>
+
+            {% if applications %}
+            <table class="applications-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>User</th>
+                        <th>Age</th>
+                        <th>Monthly Income</th>
+                        <th>Loan Amount</th>
+                        <th>History Score</th>
+                        <th>Status</th>
+                        <th>Applied Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for app in applications %}
+                    <tr>
+                        <td>#{{ app.id }}</td>
+                        <td>
+                            <strong>{{ app.user.username }}</strong><br>
+                            <small>{{ app.user.email }}</small>
+                        </td>
+                        <td>{{ app.age }} years</td>
+                        <td>{{ "{:,.0f}".format(app.monthly_income) }} RWF</td>
+                        <td>{{ "{:,.0f}".format(app.loan_amount) }} RWF</td>
+                        <td>
+                            <span class="loan-history-score score-{{ app.loan_history_score or 'insufficient' }}">
+                                {{ app.loan_history_score or 'insufficient' }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="status-badge status-{{ app.status }}">
+                                {{ app.status }}
+                            </span>
+                        </td>
+                        <td>{{ app.application_date.strftime('%Y-%m-%d %H:%M') }}</td>
+                        <td>
+                            <div class="action-buttons">
+                                {% if app.status == 'pending' %}
+                                <button class="btn btn-approve" onclick="reviewApplication({{ app.id }}, 'approve')">
+                                    <i class="fas fa-check"></i> Approve
+                                </button>
+                                <button class="btn btn-reject" onclick="reviewApplication({{ app.id }}, 'reject')">
+                                    <i class="fas fa-times"></i> Reject
+                                </button>
+                                {% else %}
+                                <button class="btn btn-view" onclick="viewApplication({{ app.id }})">
+                                    <i class="fas fa-eye"></i> View
+                                </button>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="no-applications">
+                <i class="fas fa-inbox"></i>
+                <h3>No loan applications found</h3>
+                <p>When users apply for loans, they will appear here for review.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        async function reviewApplication(loanId, action) {
+            const { value: notes } = await Swal.fire({
+                title: `${action === 'approve' ? 'Approve' : 'Reject'} Loan Application`,
+                text: `Are you sure you want to ${action} this loan application?`,
+                input: 'textarea',
+                inputLabel: 'Admin Notes (optional)',
+                inputPlaceholder: 'Enter any notes or comments...',
+                showCancelButton: true,
+                confirmButtonText: action === 'approve' ? 'Approve' : 'Reject',
+                confirmButtonColor: action === 'approve' ? '#27ae60' : '#e74c3c',
+                cancelButtonText: 'Cancel'
+            });
+
+            if (notes !== undefined) {
+                try {
+                    const response = await fetch(`/admin/review_loan/${loanId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            action: action,
+                            notes: notes
+                        })
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success!',
+                            text: result.message,
+                            confirmButtonColor: '#4facfe'
+                        }).then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: result.message,
+                            confirmButtonColor: '#4facfe'
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Network Error',
+                        text: 'Unable to process the request. Please try again.',
+                        confirmButtonColor: '#4facfe'
+                    });
+                }
+            }
+        }
+
+        function viewApplication(loanId) {
+            // This could open a detailed view modal or navigate to a detailed page
+            Swal.fire({
+                icon: 'info',
+                title: 'Application Details',
+                text: 'Detailed view functionality can be implemented here.',
+                confirmButtonColor: '#4facfe'
+            });
+        }
+    </script>
+</body>
+</html>
